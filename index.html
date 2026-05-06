@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Coding Camp Copilot — Asisten AI untuk peserta Coding Camp 2026 powered by DBS Foundation. Tim CC26-PSU096." />
+    <!-- Ganti theme-color ke DBS Red biar address bar browser juga merah -->
+    <meta name="theme-color" content="#E31E24" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Coding Camp Copilot | CC26-PSU096</title>
+    <style>
+      html, body { height: 100%; margin: 0; }
+      #root { height: 100%; }
+
+      /* Loading screen sebelum React mount
+         Warna disesuaikan ke palet DBS (hitam + merah), bukan biru/ungu */
+      #loading {
+        position: fixed;
+        inset: 0;
+        background: #0D0D0D;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 16px;
+        z-index: 9999;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      #loading.hidden { display: none; }
+
+      /* Kotak merah berputar — sama kayak ikon di Splash */
+      #loading-icon {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, #E31E24, #8B0000);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: loading-pulse 1.6s ease-in-out infinite;
+        box-shadow: 0 0 40px rgba(227, 30, 36, 0.4);
+      }
+
+      /* Progress bar merah tipis */
+      #loading-bar-wrap {
+        width: 160px;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      #loading-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #E31E24, #FF4D52);
+        border-radius: 2px;
+        animation: loading-progress 2s ease-out forwards;
+      }
+
+      #loading p {
+        color: #4A3F5A;
+        font-size: 12px;
+        margin: 0;
+        letter-spacing: 0.05em;
+      }
+
+      @keyframes loading-pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.85; transform: scale(0.94); }
+      }
+      @keyframes loading-progress {
+        from { width: 0%; }
+        to   { width: 85%; } /* tidak sampai 100% biar nggak terkesan selesai sebelum React mount */
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading screen ditampilkan sebelum React selesai mount -->
+    <div id="loading">
+      <div id="loading-icon">
+        <!-- Ikon bot sederhana -->
+        <svg width="28" height="28" fill="none" stroke="white" stroke-width="1.8" viewBox="0 0 24 24">
+          <rect x="3" y="8" width="18" height="13" rx="2"/>
+          <path d="M12 8V5M9 5h6M8 12h.01M16 12h.01M9 16h6"/>
+          <circle cx="12" cy="3" r="1"/>
+        </svg>
+      </div>
+
+      <!-- Progress bar animasi -->
+      <div id="loading-bar-wrap">
+        <div id="loading-bar"></div>
+      </div>
+
+      <p>Coding Camp Copilot · CC26-PSU096</p>
+    </div>
+
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Sembunyikan loading screen setelah React selesai render
+      // Delay 400ms biar nggak flicker kalau React-nya super cepat
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const el = document.getElementById('loading');
+          if (el) {
+            el.style.transition = 'opacity 0.3s ease';
+            el.style.opacity = '0';
+            setTimeout(() => el.classList.add('hidden'), 300);
+          }
+        }, 400);
+      });
+    </script>
+  </body>
+</html>
+
+
