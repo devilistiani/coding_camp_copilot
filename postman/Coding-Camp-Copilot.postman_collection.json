@@ -1,0 +1,435 @@
+{
+  "info": {
+    "_postman_id": "cc26-psu096-copilot-backend",
+    "name": "Coding Camp Copilot — Backend API",
+    "description": "REST API untuk Capstone CC26-PSU096.\n\nCollection ini sudah include script untuk auto-save `access_token` dan `refresh_token` ke environment variable setelah Login & Refresh sukses. Jadi tinggal jalankan urutan request dari atas ke bawah.\n\n**Cara pakai cepat:**\n1. Import collection ini + file environment `Coding-Camp-Copilot.postman_environment.json`\n2. Set environment aktif: `Local Dev`\n3. Pastikan backend jalan (`npm run dev` di folder RestAPI)\n4. Run **Login → User** atau **Login → Admin** — token otomatis tersimpan\n5. Sekarang request lain yang butuh auth (Get Me, dll) bisa langsung jalan",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5001/api/v1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "description": "Endpoint untuk monitoring",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Cek status server & koneksi DB. Public — tidak perlu auth."
+          },
+          "response": []
+        },
+        {
+          "name": "Root Info",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5001/",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5001",
+              "path": [""]
+            },
+            "description": "App info — versi, link docs, dll."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints. Rate limit: 5/min/IP untuk `/register` & `/login` (shared bucket).",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201 atau 409', function () {",
+                  "    pm.expect([201, 409]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 201) {",
+                  "    const json = pm.response.json();",
+                  "    pm.test('Response has user.id', function () {",
+                  "        pm.expect(json.data.user.id).to.be.a('string');",
+                  "    });",
+                  "    pm.test('Default role adalah \"user\"', function () {",
+                  "        pm.expect(json.data.user.role).to.eql('user');",
+                  "    });",
+                  "    console.log('✅ User berhasil dibuat:', json.data.user.email);",
+                  "} else if (pm.response.code === 409) {",
+                  "    console.log('ℹ️ User sudah ada (CONFLICT) — ini OK kalau test sebelumnya udah jalan');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@codingcamp.id\",\n  \"password\": \"Password123\",\n  \"full_name\": \"User Baru\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Daftar user baru. Default role: `user`.\n\nValidasi:\n- `email`: format email valid, unique\n- `password`: min 8 char, harus ada huruf & angka\n- `full_name`: min 2 char, max 150\n\nResponse 201 → sukses\nResponse 400 → validation error\nResponse 409 → email sudah terdaftar\nResponse 429 → rate limit (5/menit)"
+          },
+          "response": []
+        },
+        {
+          "name": "Login — User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    pm.test('Response has token & user', function () {",
+                  "        pm.expect(json.data.token).to.be.a('string');",
+                  "        pm.expect(json.data.refresh_token).to.be.a('string');",
+                  "        pm.expect(json.data.user).to.be.an('object');",
+                  "    });",
+                  "    // Auto-save tokens ke environment supaya bisa dipakai request lain",
+                  "    pm.environment.set('access_token', json.data.token);",
+                  "    pm.environment.set('refresh_token', json.data.refresh_token);",
+                  "    pm.environment.set('current_user_email', json.data.user.email);",
+                  "    pm.environment.set('current_user_role', json.data.user.role);",
+                  "    console.log('✅ Login sukses sebagai', json.data.user.role + ':', json.data.user.email);",
+                  "    console.log('   Token expires in', json.data.expires_in, 'detik');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@codingcamp.id\",\n  \"password\": \"copilot2026\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login sebagai user biasa.\n\n**Setelah sukses**, token otomatis tersimpan di environment variable `access_token` & `refresh_token` (lihat tab Tests → script).\n\nResponse 200 → sukses\nResponse 400 → validation error\nResponse 401 → email/password salah\nResponse 429 → rate limit"
+          },
+          "response": []
+        },
+        {
+          "name": "Login — Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    pm.environment.set('access_token', json.data.token);",
+                  "    pm.environment.set('refresh_token', json.data.refresh_token);",
+                  "    pm.environment.set('current_user_email', json.data.user.email);",
+                  "    pm.environment.set('current_user_role', json.data.user.role);",
+                  "    pm.test('Role adalah admin', function () {",
+                  "        pm.expect(json.data.user.role).to.eql('admin');",
+                  "    });",
+                  "    console.log('✅ Login sukses sebagai admin:', json.data.user.email);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@codingcamp.id\",\n  \"password\": \"admin2026\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login sebagai admin. Auto-save token sama seperti Login User."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Me",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "pm.test('Response has user info', function () {",
+                  "    pm.expect(json.data.user.email).to.be.a('string');",
+                  "    pm.expect(['user', 'admin']).to.include(json.data.user.role);",
+                  "});",
+                  "console.log('ℹ️ Current user:', json.data.user);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Get info user yang sedang login (dari access token).\n\n**Auth required**: Bearer token (otomatis pakai `{{access_token}}` dari environment).\n\nResponse 200 → sukses\nResponse 401 → token invalid/expired"
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    // Token rotation — refresh token baru, refresh token lama dicabut",
+                  "    pm.environment.set('access_token', json.data.token);",
+                  "    pm.environment.set('refresh_token', json.data.refresh_token);",
+                  "    console.log('🔄 Token di-refresh & rotated');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh"]
+            },
+            "description": "Tukar refresh token dengan access token baru.\n\n**Token rotation**: refresh token lama akan **dicabut**, dapat refresh token baru. Kalau pakai refresh token lama lagi setelah refresh, akan 401.\n\nResponse 200 → sukses, dapat token baru\nResponse 401 → refresh token invalid/expired/sudah dicabut"
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 (idempotent)', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Clear token dari environment",
+                  "pm.environment.unset('access_token');",
+                  "pm.environment.unset('refresh_token');",
+                  "pm.environment.unset('current_user_email');",
+                  "pm.environment.unset('current_user_role');",
+                  "console.log('🚪 Logout sukses — token cleared');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Revoke refresh token. Idempotent — tidak error walaupun token sudah di-revoke atau gak ada di DB."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Error Cases (Test Validation)",
+      "description": "Sekenario error untuk verify rate limit, validation, auth, dll. Run setelah login dulu untuk dapat token.",
+      "item": [
+        {
+          "name": "Register — Email Sudah Ada",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@codingcamp.id\",\n  \"password\": \"Password123\",\n  \"full_name\": \"Duplicate User\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Expect: 409 CONFLICT"
+          },
+          "response": []
+        },
+        {
+          "name": "Register — Password Lemah",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"weakpw@example.id\",\n  \"password\": \"abcdefgh\",\n  \"full_name\": \"Weak PW\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Expect: 400 VALIDATION_ERROR (password tanpa angka)"
+          },
+          "response": []
+        },
+        {
+          "name": "Login — Password Salah",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@codingcamp.id\",\n  \"password\": \"WrongPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Expect: 401 UNAUTHORIZED (generic msg, no info leak)"
+          },
+          "response": []
+        },
+        {
+          "name": "Me — Tanpa Token",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Expect: 401 UNAUTHORIZED (no Authorization header)"
+          },
+          "response": []
+        },
+        {
+          "name": "Me — Token Invalid",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "eyJhbGciOiJIUzI1NiIs.fake.token", "type": "string" }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Expect: 401 UNAUTHORIZED (JWT verify fail)"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
