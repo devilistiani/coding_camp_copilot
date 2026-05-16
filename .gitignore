@@ -7,3 +7,6 @@ dist
 .vscode
 .idea
 coverage
+
+# Postman: keep collection & environment, skip the local-only readme
+postman/README.md
