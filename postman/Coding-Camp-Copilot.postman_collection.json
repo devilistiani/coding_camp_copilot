@@ -85,9 +85,9 @@
                   "    pm.test('Default role adalah \"user\"', function () {",
                   "        pm.expect(json.data.user.role).to.eql('user');",
                   "    });",
-                  "    console.log('✅ User berhasil dibuat:', json.data.user.email);",
+                  "    console.log('User berhasil dibuat:', json.data.user.email);",
                   "} else if (pm.response.code === 409) {",
-                  "    console.log('ℹ️ User sudah ada (CONFLICT) — ini OK kalau test sebelumnya udah jalan');",
+                  "    console.log('User sudah ada (CONFLICT) — ini OK kalau test sebelumnya udah jalan');",
                   "}"
                 ]
               }
@@ -96,9 +96,7 @@
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"newuser@codingcamp.id\",\n  \"password\": \"Password123\",\n  \"full_name\": \"User Baru\"\n}"
@@ -136,7 +134,7 @@
                   "    pm.environment.set('refresh_token', json.data.refresh_token);",
                   "    pm.environment.set('current_user_email', json.data.user.email);",
                   "    pm.environment.set('current_user_role', json.data.user.role);",
-                  "    console.log('✅ Login sukses sebagai', json.data.user.role + ':', json.data.user.email);",
+                  "    console.log('Login sukses sebagai', json.data.user.role + ':', json.data.user.email);",
                   "    console.log('   Token expires in', json.data.expires_in, 'detik');",
                   "}"
                 ]
@@ -146,9 +144,7 @@
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"user@codingcamp.id\",\n  \"password\": \"copilot2026\"\n}"
@@ -183,7 +179,7 @@
                   "    pm.test('Role adalah admin', function () {",
                   "        pm.expect(json.data.user.role).to.eql('admin');",
                   "    });",
-                  "    console.log('✅ Login sukses sebagai admin:', json.data.user.email);",
+                  "    console.log('Login sukses sebagai admin:', json.data.user.email);",
                   "}"
                 ]
               }
@@ -192,9 +188,7 @@
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"admin@codingcamp.id\",\n  \"password\": \"admin2026\"\n}"
@@ -225,7 +219,7 @@
                   "    pm.expect(json.data.user.email).to.be.a('string');",
                   "    pm.expect(['user', 'admin']).to.include(json.data.user.role);",
                   "});",
-                  "console.log('ℹ️ Current user:', json.data.user);"
+                  "console.log('Current user:', json.data.user);"
                 ]
               }
             }
@@ -268,9 +262,7 @@
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
@@ -309,9 +301,7 @@
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}"
@@ -336,9 +326,7 @@
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"user@codingcamp.id\",\n  \"password\": \"Password123\",\n  \"full_name\": \"Duplicate User\"\n}"
@@ -357,9 +345,7 @@
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"weakpw@example.id\",\n  \"password\": \"abcdefgh\",\n  \"full_name\": \"Weak PW\"\n}"
@@ -378,9 +364,7 @@
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"user@codingcamp.id\",\n  \"password\": \"WrongPassword123\"\n}"
@@ -415,7 +399,11 @@
             "auth": {
               "type": "bearer",
               "bearer": [
-                { "key": "token", "value": "eyJhbGciOiJIUzI1NiIs.fake.token", "type": "string" }
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIs.fake.token",
+                  "type": "string"
+                }
               ]
             },
             "method": "GET",

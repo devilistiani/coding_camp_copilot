@@ -10,16 +10,16 @@ Node.js 20 · TypeScript · Express · PostgreSQL 15 · Prisma · JWT · Zod · 
 
 ## Endpoints (prefix `/api/v1`)
 
-| Method | Path | Auth | Fungsi |
-|---|---|---|---|
-| `GET` | `/health` | ❌ | Health check + DB ping |
-| `POST` | `/auth/register` | ❌ | Daftar user baru (default role: `user`) |
-| `POST` | `/auth/login` | ❌ | Login → access token (15m) + refresh token (7d) |
-| `POST` | `/auth/refresh` | ❌ | Rotate refresh token → access baru |
-| `POST` | `/auth/logout` | ❌ | Revoke refresh token |
-| `GET` | `/auth/me` | ✅ | Info user yang sedang login |
+| Method | Path             | Auth | Fungsi                                          |
+| ------ | ---------------- | ---- | ----------------------------------------------- |
+| `GET`  | `/health`        |      | Health check + DB ping                          |
+| `POST` | `/auth/register` |      | Daftar user baru (default role: `user`)         |
+| `POST` | `/auth/login`    |      | Login → access token (15m) + refresh token (7d) |
+| `POST` | `/auth/refresh`  |      | Rotate refresh token → access baru              |
+| `POST` | `/auth/logout`   |      | Revoke refresh token                            |
+| `GET`  | `/auth/me`       |      | Info user yang sedang login                     |
 
-📘 Dokumentasi interaktif: http://localhost:5001/api/docs
+Dokumentasi interaktif: http://localhost:5001/api/docs
 
 ## Setup Cepat
 
@@ -44,10 +44,10 @@ Server: **http://localhost:5001**
 
 ## Demo Accounts
 
-| Email | Password | Role |
-|---|---|---|
-| `user@codingcamp.id` | `copilot2026` | user |
-| `admin@codingcamp.id` | `admin2026` | admin |
+| Email                 | Password      | Role  |
+| --------------------- | ------------- | ----- |
+| `user@codingcamp.id`  | `copilot2026` | user  |
+| `admin@codingcamp.id` | `admin2026`   | admin |
 
 ## Testing
 

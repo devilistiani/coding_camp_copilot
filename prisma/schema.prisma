@@ -1,7 +1,3 @@
-// Prisma schema untuk Coding Camp Copilot Backend
-// Saat ini fokus auth dulu (User + RefreshToken).
-// Tabel lain (conversations, messages, knowledge_base, dll) ditambahkan di sprint berikutnya.
-
 generator client {
   provider = "prisma-client-js"
 }

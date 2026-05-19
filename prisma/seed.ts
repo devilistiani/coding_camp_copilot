@@ -1,12 +1,12 @@
-import { PrismaClient, UserRole } from '@prisma/client';
-import bcrypt from 'bcrypt';
+import { PrismaClient, UserRole } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
 const SALT_ROUNDS = 10;
 
 async function main() {
-  console.log('🌱 Seeding database...');
+  console.log("🌱 Seeding database...");
 
   const accounts: Array<{
     email: string;
@@ -15,15 +15,15 @@ async function main() {
     role: UserRole;
   }> = [
     {
-      email: 'user@codingcamp.id',
-      password: 'copilot2026',
-      fullName: 'User Demo',
+      email: "user@codingcamp.id",
+      password: "copilot2026",
+      fullName: "User Demo",
       role: UserRole.user,
     },
     {
-      email: 'admin@codingcamp.id',
-      password: 'admin2026',
-      fullName: 'Admin Demo',
+      email: "admin@codingcamp.id",
+      password: "admin2026",
+      fullName: "Admin Demo",
       role: UserRole.admin,
     },
   ];
@@ -32,7 +32,12 @@ async function main() {
     const passwordHash = await bcrypt.hash(acc.password, SALT_ROUNDS);
     const user = await prisma.user.upsert({
       where: { email: acc.email },
-      update: { passwordHash, fullName: acc.fullName, role: acc.role, isActive: true },
+      update: {
+        passwordHash,
+        fullName: acc.fullName,
+        role: acc.role,
+        isActive: true,
+      },
       create: {
         email: acc.email,
         passwordHash,
@@ -43,15 +48,15 @@ async function main() {
     console.log(`  ✓ ${acc.role.padEnd(10)} ${user.email}`);
   }
 
-  console.log('\n✅ Seed selesai.\n');
-  console.log('Demo accounts:');
-  console.log('  user@codingcamp.id  / copilot2026');
-  console.log('  admin@codingcamp.id / admin2026\n');
+  console.log("\nSeed selesai.\n");
+  console.log("Demo accounts:");
+  console.log("  user@codingcamp.id  / copilot2026");
+  console.log("  admin@codingcamp.id / admin2026\n");
 }
 
 main()
   .catch((err) => {
-    console.error('❌ Seed gagal:', err);
+    console.error("Seed gagal:", err);
     process.exit(1);
   })
   .finally(async () => {

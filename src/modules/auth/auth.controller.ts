@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import * as authService from './auth.service.js';
-import { ApiError } from '../../lib/ApiError.js';
-import { LoginInput, RefreshInput, RegisterInput } from './auth.schema.js';
+import { Request, Response, NextFunction } from "express";
+import * as authService from "./auth.service.js";
+import { ApiError } from "../../lib/ApiError.js";
+import { LoginInput, RefreshInput, RegisterInput } from "./auth.schema.js";
 
 export async function register(
   req: Request<unknown, unknown, RegisterInput>,
@@ -26,8 +26,6 @@ export async function login(
 ) {
   try {
     const { user, tokens } = await authService.login(req.body);
-    // Format response: flat compatible dengan frontend Siti.
-    // Selain itu juga tetap compliant dengan standar response (success + data wrapper).
     res.status(200).json({
       success: true,
       data: {
@@ -69,7 +67,7 @@ export async function logout(
 ) {
   try {
     await authService.logout(req.body.refresh_token);
-    res.status(200).json({ success: true, message: 'Logged out' });
+    res.status(200).json({ success: true, message: "Logged out" });
   } catch (err) {
     next(err);
   }
