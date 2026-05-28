@@ -1,3 +1,4 @@
+import time
 import numpy as np
 import tensorflow as tf
 from model.preprocessing import preprocess
@@ -38,9 +39,15 @@ SYSTEM_PROMPTS = {
     ),
 }
 
+FALLBACK_MESSAGES = {
+    0: "Maaf, sistem sedang tidak tersedia. Untuk pertanyaan seputar administrasi dan akun, silakan hubungi fasilitator program melalui kanal resmi.",
+    1: "Maaf, sistem sedang tidak tersedia. Untuk pertanyaan seputar capstone project, silakan cek dokumen panduan capstone atau hubungi fasilitator.",
+    2: "Maaf, sistem sedang tidak tersedia. Untuk pertanyaan seputar materi dan kurikulum, silakan cek platform Dicoding atau hubungi fasilitator.",
+    3: "Maaf, sistem sedang tidak tersedia. Untuk pertanyaan teknis seperti kehadiran ILT atau dashboard, silakan hubungi fasilitator program.",
+}
+
 
 def predict_intent(text: str, model, tokenizer) -> dict:
-    """Prediksi intent satu pertanyaan."""
     if not text or not isinstance(text, str) or len(text.strip()) == 0:
         return {
             'status': 'error',
@@ -93,17 +100,35 @@ def predict_intent(text: str, model, tokenizer) -> dict:
 
 
 def generate_reply(question: str, intent_result: dict, gemini_model) -> str:
-    """Generate auto-reply menggunakan Gemini berdasarkan intent."""
     label = intent_result['label']
     system_prompt = SYSTEM_PROMPTS[label]
     category = intent_result['category']
 
     full_prompt = (
         f"{system_prompt}\n\n"
-        f"Kategori pertanyaan yang terdeteksi: {category}\n"
+        f"Kategori pertanyaan: {category}\n"
         f"Pertanyaan peserta: {question}\n\n"
-        f"Berikan jawaban yang membantu dan to-the-point."
+        f"Berikan jawaban yang membantu dan to-the-point dalam Bahasa Indonesia."
     )
 
-    response = gemini_model.generate_content(full_prompt)
-    return response.text.strip()
+    max_retries = 3
+    for attempt in range(1, max_retries + 1):
+        try:
+            response = gemini_model.generate_content(full_prompt)
+            if response and response.text:
+                return response.text.strip()
+
+        except Exception as e:
+            err = str(e)
+            is_retryable = any(
+                code in err for code in ["503", "429", "500", "overloaded"]
+            )
+            if is_retryable and attempt < max_retries:
+                time.sleep(5 * attempt)
+            else:
+                break
+
+    return FALLBACK_MESSAGES.get(
+        label,
+        "Maaf, sistem sedang tidak tersedia. Silakan hubungi fasilitator program."
+    )

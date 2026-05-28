@@ -85,7 +85,7 @@ async def lifespan(app: FastAPI):
     app_state['gemini'] = genai.GenerativeModel(
         model_name='gemini-2.5-flash',
         generation_config=genai.types.GenerationConfig(
-            temperature=0.4,
+            temperature=0.2,
             max_output_tokens=8192,
         )
     )
@@ -138,11 +138,6 @@ def health_check():
         "tokenizer_loaded": 'tokenizer' in app_state,
         "gemini_loaded": 'gemini' in app_state
     }
-
-@app.get("/models")
-def list_models():
-    models = genai.list_models()
-    return [m.name for m in models]
 
 @app.post("/predict")
 def predict(request: QuestionRequest):
@@ -217,8 +212,8 @@ def predict_with_reply(request: QuestionRequest):
             intent_result=intent_result,
             gemini_model=app_state['gemini']
         )
-    except Exception as e:
-        reply = f"Auto-reply tidak tersedia: {str(e)}"
+    except Exception:
+        reply = "Maaf, sistem sedang tidak tersedia. Silakan hubungi fasilitator program."
 
     return {
         **intent_result,
