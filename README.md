@@ -43,7 +43,7 @@ pip install -r requirements.txt
 ### 3. Konfigurasi Environment Variable
 
 ```env
-GEMINI_API_KEY=api_key_gemini
+GEMINI_API_KEY=your_api_key_here
 ```
 
 ### 4. Jalankan Server FastAPI
