@@ -11,8 +11,6 @@ REST API untuk Coding Camp Copilot — Capstone Project CC26-PSU096.
 
 **Tema**: Accessible & Adaptive Learning
 **Tim**: DBS Foundation x Dicoding 2026
-
-Saat ini hanya endpoint **Authentication** yang sudah live. Endpoint lain (chat, knowledge base, dll) menyusul.
     `.trim(),
     contact: {
       name: 'Tim CC26-PSU096',
@@ -30,6 +28,9 @@ Saat ini hanya endpoint **Authentication** yang sudah live. Endpoint lain (chat,
   ],
   tags: [
     { name: 'Auth', description: 'Authentication & user session' },
+    { name: 'Chat', description: 'Chat dengan AI Copilot' },
+    { name: 'Conversations', description: 'Kelola conversation history' },
+    { name: 'Admin', description: 'Admin operations (kelola peserta, manage users)' },
     { name: 'Health', description: 'System health check' },
   ],
   components: {
@@ -41,7 +42,6 @@ Saat ini hanya endpoint **Authentication** yang sudah live. Endpoint lain (chat,
       },
     },
     schemas: {
-      // ── Input ─────────────────────────────────────────────
       RegisterInput: {
         type: 'object',
         required: ['email', 'password', 'full_name'],
@@ -60,7 +60,7 @@ Saat ini hanya endpoint **Authentication** yang sudah live. Endpoint lain (chat,
         type: 'object',
         required: ['email', 'password'],
         properties: {
-          email: { type: 'string', format: 'email', example: 'user@codingcamp.id' },
+          email: { type: 'string', format: 'email', example: 'peserta@codingcamp.id' },
           password: { type: 'string', example: 'copilot2026' },
         },
       },
@@ -72,14 +72,13 @@ Saat ini hanya endpoint **Authentication** yang sudah live. Endpoint lain (chat,
         },
       },
 
-      // ── Output ────────────────────────────────────────────
       PublicUser: {
         type: 'object',
         properties: {
           id: { type: 'string', format: 'uuid' },
           email: { type: 'string', format: 'email' },
           name: { type: 'string', example: 'John Doe' },
-          role: { type: 'string', enum: ['user', 'admin'] },
+          role: { type: 'string', enum: ['peserta', 'admin'] },
         },
       },
       RegisterResponse: {
@@ -123,6 +122,118 @@ Saat ini hanya endpoint **Authentication** yang sudah live. Endpoint lain (chat,
           },
         },
       },
+      ChatRequest: {
+        type: 'object',
+        required: ['question'],
+        properties: {
+          question: {
+            type: 'string',
+            minLength: 2,
+            maxLength: 2000,
+            example: 'Kapan deadline submission capstone?',
+          },
+          conversation_id: {
+            type: 'string',
+            format: 'uuid',
+            description: 'Optional. Kalau gak diisi, conversation baru otomatis dibuat.',
+          },
+        },
+      },
+      PublicMessage: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', format: 'uuid' },
+          sender_type: { type: 'string', enum: ['user', 'ai'] },
+          content: { type: 'string' },
+          category: { type: 'string', nullable: true, example: 'Capstone & Reporting' },
+          urgency: { type: 'string', enum: ['low', 'medium', 'high'], nullable: true },
+          confidence: { type: 'number', nullable: true, example: 0.9123 },
+          draft_reply: { type: 'string', nullable: true, description: 'Gemini draft reply (admin only)' },
+          ai_metadata: { type: 'object', nullable: true },
+          created_at: { type: 'string', format: 'date-time' },
+        },
+      },
+      ChatResponse: {
+        type: 'object',
+        properties: {
+          success: { type: 'boolean', example: true },
+          data: {
+            type: 'object',
+            properties: {
+              conversation: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string', format: 'uuid' },
+                  title: { type: 'string', nullable: true },
+                },
+              },
+              user_message: { $ref: '#/components/schemas/PublicMessage' },
+              ai_message: { $ref: '#/components/schemas/PublicMessage' },
+            },
+          },
+        },
+      },
+      ListConversationsResponse: {
+        type: 'object',
+        properties: {
+          success: { type: 'boolean', example: true },
+          data: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string', format: 'uuid' },
+                    title: { type: 'string', nullable: true },
+                    message_count: { type: 'integer' },
+                    created_at: { type: 'string', format: 'date-time' },
+                    updated_at: { type: 'string', format: 'date-time' },
+                  },
+                },
+              },
+              pagination: {
+                type: 'object',
+                properties: {
+                  page: { type: 'integer' },
+                  limit: { type: 'integer' },
+                  total: { type: 'integer' },
+                  total_pages: { type: 'integer' },
+                },
+              },
+            },
+          },
+        },
+      },
+      ConversationDetailResponse: {
+        type: 'object',
+        properties: {
+          success: { type: 'boolean', example: true },
+          data: {
+            type: 'object',
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              title: { type: 'string', nullable: true },
+              created_at: { type: 'string', format: 'date-time' },
+              updated_at: { type: 'string', format: 'date-time' },
+              user: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string', format: 'uuid' },
+                  email: { type: 'string' },
+                  full_name: { type: 'string' },
+                },
+              },
+              messages: {
+                type: 'array',
+                items: { $ref: '#/components/schemas/PublicMessage' },
+              },
+            },
+          },
+        },
+      },
+
       ErrorResponse: {
         type: 'object',
         properties: {
@@ -197,6 +308,5 @@ Saat ini hanya endpoint **Authentication** yang sudah live. Endpoint lain (chat,
 
 export const swaggerSpec = swaggerJSDoc({
   definition: swaggerDefinition,
-  // Glob pattern relatif ke cwd. tsx & node sama-sama jalan dari root backend folder.
   apis: ['./src/modules/**/*.routes.ts', './src/routes.ts'],
 });

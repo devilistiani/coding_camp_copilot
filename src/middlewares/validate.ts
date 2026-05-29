@@ -14,7 +14,6 @@ export function validate(schema: ZodSchema, source: Source = 'body') {
       }));
       return next(ApiError.badRequest('Validasi input gagal', details));
     }
-    // overwrite dengan parsed value (sudah di-coerce/transform kalau ada)
     req[source] = result.data;
     next();
   };

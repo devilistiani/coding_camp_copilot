@@ -32,7 +32,27 @@ app.use(
 
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
-app.use(pinoHttp({ logger }));
+app.use(
+  pinoHttp({
+    logger,
+    customLogLevel: (_req, res, err) => {
+      if (err || res.statusCode >= 500) return "error";
+      if (res.statusCode >= 400) return "warn";
+      return "info";
+    },
+    customSuccessMessage: (req, res, responseTime) =>
+      `${req.method} ${req.url} ${res.statusCode} ${Math.round(responseTime)}ms`,
+    customErrorMessage: (req, res, err) =>
+      `${req.method} ${req.url} ${res.statusCode} (${err.message})`,
+    serializers: {
+      req: () => undefined,
+      res: () => undefined,
+    },
+    autoLogging: {
+      ignore: (req) => req.url === "/api/v1/health" || req.url === "/",
+    },
+  }),
+);
 
 app.get("/api/docs.json", (_req, res) => res.json(swaggerSpec));
 app.use(

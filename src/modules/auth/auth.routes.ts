@@ -3,13 +3,12 @@ import rateLimit from 'express-rate-limit';
 import * as authController from './auth.controller.js';
 import { validate } from '../../middlewares/validate.js';
 import { authenticate } from '../../middlewares/authenticate.js';
-import { loginSchema, refreshSchema, registerSchema } from './auth.schema.js';
+import { loginSchema, refreshSchema, registerSchema, updateMeSchema } from './auth.schema.js';
 
 const router = Router();
 
-// Rate limit khusus untuk login & register supaya tidak gampang di-brute force
 const authLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 menit
+  windowMs: 60 * 1000,
   limit: 5,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
@@ -174,5 +173,43 @@ router.post('/logout', validate(refreshSchema), authController.logout);
  *         $ref: '#/components/responses/Unauthorized'
  */
 router.get('/me', authenticate, authController.me);
+
+/**
+ * @openapi
+ * /auth/me:
+ *   patch:
+ *     tags: [Auth]
+ *     summary: Update profile user yang sedang login
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [full_name]
+ *             properties:
+ *               full_name: { type: string, minLength: 2, maxLength: 150, example: "Nama Baru" }
+ *     responses:
+ *       200:
+ *         description: Profile berhasil diupdate
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     user:
+ *                       $ref: '#/components/schemas/PublicUser'
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ */
+router.patch('/me', authenticate, validate(updateMeSchema), authController.updateMe);
 
 export default router;

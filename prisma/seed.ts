@@ -15,10 +15,10 @@ async function main() {
     role: UserRole;
   }> = [
     {
-      email: "user@codingcamp.id",
+      email: "peserta@codingcamp.id",
       password: "copilot2026",
-      fullName: "User Demo",
-      role: UserRole.user,
+      fullName: "Peserta Demo",
+      role: UserRole.peserta,
     },
     {
       email: "admin@codingcamp.id",
@@ -50,8 +50,8 @@ async function main() {
 
   console.log("\nSeed selesai.\n");
   console.log("Demo accounts:");
-  console.log("  user@codingcamp.id  / copilot2026");
-  console.log("  admin@codingcamp.id / admin2026\n");
+  console.log("  peserta@codingcamp.id / copilot2026");
+  console.log("  admin@codingcamp.id   / admin2026\n");
 }
 
 main()

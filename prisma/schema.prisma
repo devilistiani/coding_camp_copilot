@@ -8,8 +8,19 @@ datasource db {
 }
 
 enum UserRole {
-  user
+  peserta
   admin
+}
+
+enum SenderType {
+  user
+  ai
+}
+
+enum UrgencyLevel {
+  low
+  medium
+  high
 }
 
 model User {
@@ -17,12 +28,13 @@ model User {
   email        String   @unique @db.VarChar(255)
   passwordHash String   @map("password_hash") @db.VarChar(255)
   fullName     String   @map("full_name") @db.VarChar(150)
-  role         UserRole @default(user)
+  role         UserRole @default(peserta)
   isActive     Boolean  @default(true) @map("is_active")
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   refreshTokens RefreshToken[]
+  conversations Conversation[]
 
   @@index([email])
   @@index([role])
@@ -42,4 +54,37 @@ model RefreshToken {
   @@index([userId])
   @@index([tokenHash])
   @@map("refresh_tokens")
+}
+
+model Conversation {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  title     String?  @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages Message[]
+
+  @@index([userId])
+  @@map("conversations")
+}
+
+model Message {
+  id             String        @id @default(uuid()) @db.Uuid
+  conversationId String        @map("conversation_id") @db.Uuid
+  senderType     SenderType    @map("sender_type")
+  content        String        @db.Text
+  category       String?       @db.VarChar(100) // AI category result, e.g. "Teknis/Lain-lain"
+  urgency        UrgencyLevel?
+  confidence     Decimal?      @db.Decimal(5, 4) // 0.0000 - 1.0000
+  draftReply     String?       @map("draft_reply") @db.Text // Gemini reply for admin
+  aiMetadata     Json?         @map("ai_metadata") @db.JsonB // raw all_scores, model version, dll
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([createdAt(sort: Desc)])
+  @@map("messages")
 }

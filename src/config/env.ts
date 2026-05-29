@@ -21,6 +21,9 @@ const envSchema = z.object({
 
   CORS_ORIGINS: z.string().default("http://localhost:5173"),
 
+  AI_SERVICE_URL: z.string().url("AI_SERVICE_URL harus URL valid"),
+  AI_SERVICE_TIMEOUT_MS: z.coerce.number().int().positive().default(15000),
+
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])
     .default("info"),

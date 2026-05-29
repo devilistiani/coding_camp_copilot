@@ -17,7 +17,6 @@ async function shutdown(signal: string) {
     process.exit(0);
   });
 
-  // Hard exit kalau gak shutdown gracefully dalam 10 detik
   setTimeout(() => {
     logger.error("Force shutdown setelah timeout");
     process.exit(1);

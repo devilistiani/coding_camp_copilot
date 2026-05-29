@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as authService from "./auth.service.js";
 import { ApiError } from "../../lib/ApiError.js";
-import { LoginInput, RefreshInput, RegisterInput } from "./auth.schema.js";
+import { LoginInput, RefreshInput, RegisterInput, UpdateMeInput } from "./auth.schema.js";
 
 export async function register(
   req: Request<unknown, unknown, RegisterInput>,
@@ -77,6 +77,20 @@ export async function me(req: Request, res: Response, next: NextFunction) {
   try {
     if (!req.user) throw ApiError.unauthorized();
     const user = await authService.getMe(req.user.sub);
+    res.status(200).json({ success: true, data: { user } });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function updateMe(
+  req: Request<unknown, unknown, UpdateMeInput>,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    if (!req.user) throw ApiError.unauthorized();
+    const user = await authService.updateMe(req.user.sub, req.body);
     res.status(200).json({ success: true, data: { user } });
   } catch (err) {
     next(err);

@@ -12,7 +12,7 @@ import {
 } from '../../lib/jwt.js';
 import { ApiError } from '../../lib/ApiError.js';
 import { env } from '../../config/env.js';
-import { LoginInput, RegisterInput } from './auth.schema.js';
+import { LoginInput, RegisterInput, UpdateMeInput } from './auth.schema.js';
 
 export interface AuthTokens {
   token: string;
@@ -72,7 +72,7 @@ export async function register(input: RegisterInput): Promise<{ user: PublicUser
       email: input.email,
       passwordHash,
       fullName: input.full_name,
-      role: UserRole.user, // default register sebagai user biasa
+      role: UserRole.peserta,
     },
   });
 
@@ -83,7 +83,6 @@ export async function login(
   input: LoginInput,
 ): Promise<{ user: PublicUser; tokens: AuthTokens }> {
   const user = await prisma.user.findUnique({ where: { email: input.email } });
-  // pesan generik supaya gak bocor info "email tidak ada"
   if (!user || !user.isActive) {
     throw ApiError.unauthorized('Email atau password salah');
   }
@@ -100,7 +99,6 @@ export async function login(
 export async function refresh(refreshToken: string): Promise<{ tokens: AuthTokens }> {
   const payload = verifyRefreshToken(refreshToken);
 
-  // Cek token masih ada di DB & belum di-revoke
   const tokenRow = await prisma.refreshToken.findUnique({
     where: { tokenHash: hashRefreshToken(refreshToken) },
   });
@@ -113,7 +111,6 @@ export async function refresh(refreshToken: string): Promise<{ tokens: AuthToken
     throw ApiError.unauthorized('User tidak ditemukan atau dinonaktifkan');
   }
 
-  // Rotate: revoke yang lama, terbitkan yang baru
   await prisma.refreshToken.update({
     where: { id: tokenRow.id },
     data: { revokedAt: new Date() },
@@ -133,11 +130,21 @@ export async function logout(refreshToken: string): Promise<void> {
       data: { revokedAt: new Date() },
     });
   }
-  // gak throw error walaupun token gak ditemukan — idempotent
 }
 
 export async function getMe(userId: string): Promise<PublicUser> {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) throw ApiError.notFound('User tidak ditemukan');
+  return toPublicUser(user);
+}
+
+export async function updateMe(userId: string, input: UpdateMeInput): Promise<PublicUser> {
+  const existing = await prisma.user.findUnique({ where: { id: userId } });
+  if (!existing) throw ApiError.notFound('User tidak ditemukan');
+
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: { fullName: input.full_name },
+  });
   return toPublicUser(user);
 }

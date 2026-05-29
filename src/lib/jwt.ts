@@ -4,14 +4,14 @@ import { env } from '../config/env.js';
 import { ApiError } from './ApiError.js';
 
 export interface AccessTokenPayload {
-  sub: string; // user id
+  sub: string;
   email: string;
-  role: 'user' | 'admin';
+  role: 'peserta' | 'admin';
 }
 
 export interface RefreshTokenPayload {
   sub: string;
-  jti: string; // unique id supaya bisa di-revoke
+  jti: string;
 }
 
 export function signAccessToken(payload: AccessTokenPayload): string {
@@ -42,12 +42,10 @@ export function verifyRefreshToken(token: string): RefreshTokenPayload {
   }
 }
 
-// Hash refresh token sebelum simpan ke DB (jangan simpan plaintext!)
 export function hashRefreshToken(token: string): string {
   return crypto.createHash('sha256').update(token).digest('hex');
 }
 
-// Convert string seperti "7d" / "15m" jadi expiry Date
 export function expiresAtFromDuration(duration: string): Date {
   const match = duration.match(/^(\d+)([smhd])$/);
   if (!match) throw new Error(`Format duration tidak valid: ${duration}`);
@@ -57,7 +55,6 @@ export function expiresAtFromDuration(duration: string): Date {
   return new Date(Date.now() + num * ms);
 }
 
-// Convert string duration jadi detik (untuk field expires_in di response)
 export function durationToSeconds(duration: string): number {
   const match = duration.match(/^(\d+)([smhd])$/);
   if (!match) throw new Error(`Format duration tidak valid: ${duration}`);

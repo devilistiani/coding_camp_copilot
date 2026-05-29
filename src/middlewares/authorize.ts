@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { ApiError } from '../lib/ApiError.js';
 
-type Role = 'user' | 'admin';
+type Role = 'peserta' | 'admin';
 
 export function authorize(...allowedRoles: Role[]) {
   return (req: Request, _res: Response, next: NextFunction) => {

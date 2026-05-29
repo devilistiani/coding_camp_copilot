@@ -10,7 +10,6 @@ export function notFoundHandler(req: Request, _res: Response, next: NextFunction
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function errorHandler(err: unknown, _req: Request, res: Response, _next: NextFunction) {
-  // ApiError yang sudah terstruktur — tinggal di-serialize
   if (err instanceof ApiError) {
     return res.status(err.statusCode).json({
       success: false,
@@ -22,10 +21,8 @@ export function errorHandler(err: unknown, _req: Request, res: Response, _next: 
     });
   }
 
-  // Prisma error → mapping ke API error yang clean
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     if (err.code === 'P2002') {
-      // unique constraint violation
       const target = (err.meta?.target as string[] | undefined)?.join(', ') ?? 'field';
       return res.status(409).json({
         success: false,
@@ -46,7 +43,6 @@ export function errorHandler(err: unknown, _req: Request, res: Response, _next: 
     }
   }
 
-  // Unknown error — log & return 500
   logger.error({ err }, 'Unhandled error di errorHandler');
   return res.status(500).json({
     success: false,
