@@ -113,9 +113,9 @@ st.markdown("---")
 
 @st.cache_data
 def load_data():
-    df_bersih  = pd.read_csv("DataScience/data/data_bersih.csv")
-    df_ab_test = pd.read_csv("DataScience/data/hasil_ab_testing.csv")
-    df_tfidf   = pd.read_csv("DataScience/data/dataset_tfidf.csv")
+    df_bersih = pd.read_csv("data/data_bersih.csv")
+    df_ab_test = pd.read_csv("data/hasil_ab_testing.csv")
+    df_tfidf = pd.read_csv("data/dataset_tfidf.csv")
 
   # filter path yang tidak dipakai di dataset final  
     df_bersih = df_bersih.rename(columns={"Kategori_Bersih": "Path"})
