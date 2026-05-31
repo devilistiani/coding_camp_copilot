@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Bot, Menu, X, MessageSquare, Home, LogIn,
-  BookOpen, LogOut, ChevronDown, Clock, User,
+  BookOpen, LogOut, ChevronDown, Clock, User, ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
-// daftar link navigasi — tambahin di sini kalau ada halaman baru
-// urutan ini juga yang muncul di mobile menu
 const navLinks = [
   { to: "/",        label: "Beranda", icon: Home          },
   { to: "/chat",    label: "Chat AI", icon: MessageSquare },
@@ -16,11 +15,11 @@ const navLinks = [
 ];
 
 export function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen]       = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const location = useLocation();
-  const navigate = useNavigate();
+  const navigate  = useNavigate();
   const { user, isLoggedIn, logout } = useAuth();
 
   const handleLogout = () => {
@@ -29,209 +28,208 @@ export function Navbar() {
     navigate("/login");
   };
 
-  // badge role — warna beda antara fasilitator dan peserta
-  const rolePill = user?.role === "fasilitator"
-    ? "bg-red-900/40 border-red-400/40 text-red-300"
-    : "bg-violet-900/40 border-violet-400/40 text-violet-300";
+  const rolePill = user?.role === "admin"
+    ? "bg-amber-500/15 border-amber-400/30 text-amber-300"
+    : "bg-violet-500/15 border-violet-400/30 text-violet-300";
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#0D0D0D]/95 backdrop-blur-md border-b border-red-900/30 shadow-lg shadow-black/40">
+    <nav className="sticky top-0 z-50 bg-[#0D0D0D]/95 backdrop-blur-md border-b border-white/6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14">
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 bg-gradient-to-br from-[#E31E24] to-[#5B1A8A] rounded-xl flex items-center justify-center shadow-lg shadow-red-900/50 group-hover:shadow-red-600/40 transition-shadow">
-              <Bot className="w-5 h-5 text-white" />
+          <Link to="/" className="flex items-center gap-2.5 group flex-shrink-0">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#E31E24] to-[#5B1A8A] rounded-lg flex items-center justify-center shadow-md shadow-red-900/40 group-hover:shadow-red-600/40 transition-shadow">
+              <Bot className="w-4 h-4 text-white" />
             </div>
-            <div className="flex flex-col leading-none">
-              <span className="text-white font-bold text-sm tracking-tight">Coding Camp</span>
-              <span className="text-[#E31E24] font-bold text-sm tracking-tight">Copilot</span>
-            </div>
+            <span className="text-white font-bold text-sm tracking-tight">
+              Coding Camp <span className="text-[#E31E24]">Copilot</span>
+            </span>
           </Link>
 
           {/* Nav links — desktop */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-0.5">
             {navLinks.map(({ to, label, icon: Icon }) => {
               const isActive = location.pathname === to;
               return (
                 <Link
                   key={to}
                   to={to}
-                  className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm transition-all ${
+                  className={`relative flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm transition-all font-medium ${
                     isActive
-                      ? "bg-red-950/60 text-[#E31E24] font-semibold border border-red-800/40"
-                      : "text-slate-400 hover:bg-white/5 hover:text-white"
+                      ? "text-white bg-white/8"
+                      : "text-slate-500 hover:text-white hover:bg-white/5"
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-3.5 h-3.5" />
                   {label}
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-indicator"
+                      className="absolute bottom-0 left-3 right-3 h-0.5 bg-[#E31E24] rounded-full"
+                    />
+                  )}
                 </Link>
               );
             })}
           </div>
 
-          {/* Kanan: user dropdown atau tombol login */}
+          {/* Right side */}
           <div className="flex items-center gap-2">
             {isLoggedIn && user ? (
               <>
-                {/* User dropdown — desktop only */}
+                {/* User dropdown */}
                 <div className="hidden sm:block relative">
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all"
+                    className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-white/8 bg-white/4 hover:bg-white/8 transition-all"
                   >
-                    <div className="w-6 h-6 bg-gradient-to-br from-[#E31E24] to-[#5B1A8A] rounded-lg flex items-center justify-center text-white text-[10px] font-bold">
-                      {user.name.charAt(0)}
+                    <div className="w-6 h-6 bg-gradient-to-br from-[#E31E24] to-[#5B1A8A] rounded-md flex items-center justify-center text-white text-[10px] font-bold">
+                      {user.name.charAt(0).toUpperCase()}
                     </div>
-                    <div className="flex flex-col items-start leading-none">
-                      {/* hanya nama depan biar ga terlalu panjang */}
-                      <span className="text-white text-xs font-semibold">
-                        {user.name.split(" ")[0]}
-                      </span>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full border font-medium capitalize mt-0.5 ${rolePill}`}>
-                        {user.role}
-                      </span>
-                    </div>
-                    <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${userMenuOpen ? "rotate-180" : ""}`} />
+                    <span className="text-white text-xs font-semibold">{user.name.split(" ")[0]}</span>
+                    <ChevronDown className={`w-3 h-3 text-slate-500 transition-transform duration-200 ${userMenuOpen ? "rotate-180" : ""}`} />
                   </button>
 
-                  {/* Dropdown menu */}
-                  {userMenuOpen && (
-                    <div className="absolute right-0 top-full mt-2 w-52 bg-[#130B1E] border border-red-900/30 rounded-xl shadow-2xl overflow-hidden z-50">
-                      <div className="px-4 py-3 border-b border-white/5">
-                        <p className="text-white text-sm font-semibold">{user.name}</p>
-                        <p className="text-slate-400 text-xs mt-0.5">{user.email}</p>
-                      </div>
-                      <Link
-                        to="/profile"
-                        onClick={() => setUserMenuOpen(false)}
-                        className="w-full flex items-center gap-2 px-4 py-2.5 text-slate-300 hover:bg-white/5 transition-colors text-sm"
+                  <AnimatePresence>
+                    {userMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 top-full mt-2 w-52 bg-[#130B1E] border border-white/8 rounded-xl shadow-2xl shadow-black/60 overflow-hidden z-50"
                       >
-                        <User className="w-4 h-4" /> Profil & Pengaturan
-                      </Link>
-                      <Link
-                        to="/history"
-                        onClick={() => setUserMenuOpen(false)}
-                        className="w-full flex items-center gap-2 px-4 py-2.5 text-slate-300 hover:bg-white/5 transition-colors text-sm"
-                      >
-                        <Clock className="w-4 h-4" /> Riwayat Chat
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-4 py-2.5 text-red-400 hover:bg-red-950/40 transition-colors text-sm border-t border-white/5"
-                      >
-                        <LogOut className="w-4 h-4" /> Keluar
-                      </button>
-                    </div>
-                  )}
+                        <div className="px-4 py-3 border-b border-white/5">
+                          <p className="text-white text-sm font-semibold truncate">{user.name}</p>
+                          <p className="text-slate-500 text-xs mt-0.5 truncate">{user.email}</p>
+                          <span className={`inline-block mt-1.5 text-[10px] px-2 py-0.5 rounded-full border font-medium capitalize ${rolePill}`}>
+                            {user.role}
+                          </span>
+                        </div>
+                        <Link to="/profile" onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white transition-colors text-sm">
+                          <User className="w-3.5 h-3.5" /> Edit Profil
+                        </Link>
+                        <Link to="/history" onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white transition-colors text-sm">
+                          <Clock className="w-3.5 h-3.5" /> Riwayat Chat
+                        </Link>
+                        {user.role === "admin" && (
+                          <Link to="/admin" onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-amber-300 hover:bg-amber-500/10 transition-colors text-sm border-t border-white/5">
+                            <ShieldCheck className="w-3.5 h-3.5" /> Admin Panel
+                          </Link>
+                        )}
+                        <button onClick={handleLogout}
+                          className="w-full flex items-center gap-2.5 px-4 py-2.5 text-red-400 hover:bg-red-500/10 transition-colors text-sm border-t border-white/5">
+                          <LogOut className="w-3.5 h-3.5" /> Keluar
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                {/* Tombol chat shortcut */}
-                <Link
-                  to="/chat"
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#E31E24] hover:bg-[#A51419] text-white text-sm rounded-xl transition-all font-semibold shadow-lg shadow-red-900/40"
-                >
-                  <MessageSquare className="w-4 h-4" /> Chat
+                <Link to="/chat"
+                  className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 bg-[#E31E24] hover:bg-[#A51419] text-white text-sm rounded-lg transition-all font-semibold shadow-md shadow-red-900/30">
+                  <MessageSquare className="w-3.5 h-3.5" /> Chat
                 </Link>
               </>
             ) : (
               <>
-                {/* Belum login */}
-                <Link
-                  to="/login"
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 border border-white/15 text-slate-300 text-sm rounded-xl hover:bg-white/5 transition-all font-medium"
-                >
-                  <LogIn className="w-4 h-4" /> Masuk
+                <Link to="/login"
+                  className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 border border-white/10 text-slate-400 text-sm rounded-lg hover:bg-white/5 hover:text-white transition-all">
+                  <LogIn className="w-3.5 h-3.5" /> Masuk
                 </Link>
-                <Link
-                  to="/chat"
-                  className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#E31E24] hover:bg-[#A51419] text-white text-sm rounded-xl transition-all font-semibold shadow-lg shadow-red-900/40"
-                >
-                  <MessageSquare className="w-4 h-4" /> Mulai Chat
+                <Link to="/chat"
+                  className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 bg-[#E31E24] hover:bg-[#A51419] text-white text-sm rounded-lg transition-all font-semibold shadow-md shadow-red-900/30">
+                  <MessageSquare className="w-3.5 h-3.5" /> Mulai Chat
                 </Link>
               </>
             )}
 
-            {/* Hamburger — mobile only */}
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden p-2 rounded-lg text-slate-400 hover:bg-white/10 transition-colors"
-            >
-              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {/* Hamburger */}
+            <button onClick={() => setMenuOpen(!menuOpen)}
+              className="md:hidden p-2 rounded-lg text-slate-400 hover:bg-white/8 hover:text-white transition-all">
+              <AnimatePresence mode="wait" initial={false}>
+                {menuOpen
+                  ? <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}><X className="w-5 h-5" /></motion.span>
+                  : <motion.span key="m" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}><Menu className="w-5 h-5" /></motion.span>
+                }
+              </AnimatePresence>
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Mobile menu */}
+      {/* Mobile menu — animated */}
+      <AnimatePresence>
         {menuOpen && (
-          <div className="md:hidden pb-4 border-t border-white/5 mt-2 pt-3">
-            <div className="flex flex-col gap-1">
-              {navLinks.map(({ to, label, icon: Icon }) => {
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="md:hidden overflow-hidden border-t border-white/5"
+          >
+            <div className="px-4 py-3 space-y-0.5 bg-[#0D0D0D]">
+              {navLinks.map(({ to, label, icon: Icon }, i) => {
                 const isActive = location.pathname === to;
                 return (
-                  <Link
+                  <motion.div
                     key={to}
-                    to={to}
-                    onClick={() => setMenuOpen(false)}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm transition-all ${
-                      isActive
-                        ? "bg-red-950/60 text-[#E31E24] font-semibold"
-                        : "text-slate-400 hover:bg-white/5 hover:text-white"
-                    }`}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 }}
                   >
-                    <Icon className="w-4 h-4" />{label}
-                  </Link>
+                    <Link to={to} onClick={() => setMenuOpen(false)}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                        isActive
+                          ? "bg-white/8 text-white border-l-2 border-[#E31E24] pl-3"
+                          : "text-slate-400 hover:bg-white/5 hover:text-white"
+                      }`}>
+                      <Icon className="w-4 h-4 flex-shrink-0" />{label}
+                    </Link>
+                  </motion.div>
                 );
               })}
 
+              <div className="h-px bg-white/5 my-2" />
+
               {isLoggedIn && user ? (
                 <>
-                  <div className="mx-4 my-2 h-px bg-white/5" />
-                  <Link
-                    to="/profile"
-                    onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-white transition-all"
-                  >
-                    <User className="w-4 h-4" /> Profil
+                  <Link to="/profile" onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-400 hover:bg-white/5 hover:text-white transition-all">
+                    <User className="w-4 h-4" /> Profil Saya
                   </Link>
-                  {/* info user di mobile */}
-                  <div className="px-4 py-2 flex items-center gap-2">
-                    <div className="w-7 h-7 bg-gradient-to-br from-[#E31E24] to-[#5B1A8A] rounded-lg flex items-center justify-center text-white text-xs font-bold">
-                      {user.name.charAt(0)}
+                  <div className="flex items-center gap-3 px-4 py-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-[#E31E24] to-[#5B1A8A] rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                      {user.name.charAt(0).toUpperCase()}
                     </div>
-                    <div>
-                      <p className="text-white text-sm font-medium">{user.name}</p>
+                    <div className="min-w-0">
+                      <p className="text-white text-sm font-semibold truncate">{user.name}</p>
                       <span className={`text-[10px] px-1.5 py-0.5 rounded-full border font-medium capitalize ${rolePill}`}>
                         {user.role}
                       </span>
                     </div>
                   </div>
-                  <button
-                    onClick={() => { handleLogout(); setMenuOpen(false); }}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm text-red-400 hover:bg-red-950/40 transition-all"
-                  >
+                  <button onClick={() => { handleLogout(); setMenuOpen(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-red-400 hover:bg-red-500/8 transition-all">
                     <LogOut className="w-4 h-4" /> Keluar
                   </button>
                 </>
               ) : (
-                <Link
-                  to="/login"
-                  onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-white transition-all"
-                >
+                <Link to="/login" onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-400 hover:bg-white/5 hover:text-white transition-all">
                   <LogIn className="w-4 h-4" /> Masuk
                 </Link>
               )}
             </div>
-          </div>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
 
-      {/* overlay transparan — klik di luar untuk tutup dropdown */}
-      {userMenuOpen && (
-        <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />
-      )}
+      {userMenuOpen && <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />}
     </nav>
   );
 }
