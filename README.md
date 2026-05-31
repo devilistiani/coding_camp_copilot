@@ -60,42 +60,19 @@ src/
 ---
 
 ## Cara Menjalankan
-
-### Prasyarat
-- Node.js v18+
-- npm v9+
-
 ```bash
 # 1. Install dependencies
 npm install
-
 # 2. Setup environment
 cp .env.example .env
 # Edit VITE_API_URL ke URL backend
-
 # 3. Development server
 npm run dev
 # Buka http://localhost:5173
-
 # 4. Build production
 npm run build
 ```
 
----
-
-## Deployment
-
-### Vercel
-```bash
-npm i -g vercel && vercel --prod
-```
-File `vercel.json` sudah dikonfigurasi untuk SPA routing.
-
-### Netlify
-Upload folder `dist/` atau gunakan `netlify deploy --prod --dir=dist`.
-File `netlify.toml` sudah dikonfigurasi.
-
----
 
 ## Akun Demo
 
@@ -107,24 +84,6 @@ File `netlify.toml` sudah dikonfigurasi.
 > Mode admin menampilkan **Draft Reply otomatis** di setiap jawaban Chat (Side Quest).
 
 ---
-
-## Format API Backend
-
-### POST `/predict`
-```json
-// Request
-{ "question": "Kapan deadline capstone?" }
-
-// Response
-{
-  "answer": "...",
-  "category": "Jadwal",
-  "urgency": "low",
-  "confidence": 0.95,
-  "draft_reply": "...",
-  "sources": ["Gantt Chart CC26-PSU096"]
-}
-```
 
 ### POST `/auth/login`
 ```json
@@ -143,29 +102,6 @@ File `netlify.toml` sudah dikonfigurasi.
 
 ---
 
-## Checklist Project Plan — Frontend
-
-### Main Quest ✅ (sudah terpenuhi)
-- [x] Networking calls ke API (`/predict`, `/auth/login`, `/health`)
-- [x] Module bundler Vite
-- [x] URL API mengikuti konvensi RESTful
-- [x] Integrasi AI/ML sebagai fitur utama di halaman Chat
-- [x] Tidak crash — fallback mock saat backend offline
-- [x] Tidak menggunakan Web Generator
-
-### Side Quest ✅ (sudah terpenuhi dari sisi frontend)
-- [x] Layout responsif — Tailwind CSS `sm:` / `md:` / `lg:`
-- [x] Draft Reply otomatis untuk admin — Generative AI pendukung
-- [x] Config deployment — `vercel.json` + `netlify.toml`
-
-### Menunggu Backend / AI / DS
-- [ ] PostgreSQL terintegrasi (histori masih `localStorage`)
-- [ ] Model TensorFlow aktual (chat masih mock)
-- [ ] Live URL deployment
-- [ ] Dashboard Streamlit
-
----
-
 ## Anggota Tim CC26-PSU096
 
 | Nama                    | Role                    | ID              |
@@ -179,4 +115,3 @@ File `netlify.toml` sudah dikonfigurasi.
 
 ---
 
-*Coding Camp 2026 × DBS Foundation · Road to Future Workforce*
