@@ -18,7 +18,7 @@ Mengklasifikasikan pertanyaan, mendeteksi urgensi, dan memberikan draft reply ot
 | Routing    | React Router v7                    |
 | Animasi    | Motion (Framer Motion)             |
 | Icons      | Lucide React                       |
-| HTTP       | Fetch API bawaan browser           |
+
 
 ---
 
