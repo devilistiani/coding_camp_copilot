@@ -142,6 +142,7 @@ def train_model(_df_tfidf):
     model.fit(X, y)
     return model, X.columns.tolist()
 
+df_bersih, df_ab_test, df_tfidf = load_data()
 model_rf, daftar_kosakata = train_model(df_tfidf)
 
 PATH_COLORS = {
