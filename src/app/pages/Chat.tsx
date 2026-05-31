@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Bot, Send, User, Sparkles, Clock, BookOpen,
-  RefreshCw, Copy, ThumbsUp, ThumbsDown, Zap, Shield,
-  ChevronRight, FileText, AlertTriangle, CheckCircle2,
+  RefreshCw, Copy, Zap, Shield,
+  ChevronRight, CheckCircle2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useAuth } from "../context/AuthContext";
@@ -20,8 +20,9 @@ interface ApiResponse {
   category: CategoryType;
   urgency: UrgencyLevel;
   confidence: number; // 0-1
-  draft_reply?: string; // cuma ada kalau role fasilitator
-  sources?: string[]; // dari RAG, dokumen mana yang kepake
+  draft_reply?: string; // cuma ada kalau role admin
+  sources?: string[];
+
 }
 
 interface Message {
@@ -159,7 +160,7 @@ const MOCK: { q: string; res: ApiResponse }[] = [
   {
     q: "tensorflow",
     res: {
-      answer: "⚙️ **Error Training TensorFlow — Troubleshooting:**\n\n1. Cek versi: `pip show tensorflow`\n2. Pastikan Python 3.8-3.11 & TF 2.x\n3. Baca error message lengkap\n\n**Error umum:**\n- `Shape mismatch` → cek dimensi input\n- `OOM` → kurangi batch_size\n- `NaN loss` → cek learning rate\n- `Import error` → `pip install tensorflow==2.15`\n\nMasih error? Screenshot log dan konsultasikan ke fasilitator!",
+      answer: "⚙️ **Error Training TensorFlow — Troubleshooting:**\n\n1. Cek versi: `pip show tensorflow`\n2. Pastikan Python 3.8-3.11 & TF 2.x\n3. Baca error message lengkap\n\n**Error umum:**\n- `Shape mismatch` → cek dimensi input\n- `OOM` → kurangi batch_size\n- `NaN loss` → cek learning rate\n- `Import error` → `pip install tensorflow==2.15`\n\nMasih error? Screenshot log dan konsultasikan ke admin!",
       category: "Teknis",
       urgency: "high",
       confidence: 0.88,
@@ -212,11 +213,11 @@ function getMock(input: string): ApiResponse {
   // default — ga ketemu di mock
   // confidence rendah biar ketauan ini fallback
   return {
-    answer: "Maaf, saya belum punya informasi spesifik untuk pertanyaan tersebut. Silakan hubungi fasilitator atau cek dokumentasi di LMS.",
+    answer: "Maaf, saya belum punya informasi spesifik untuk pertanyaan tersebut. Silakan hubungi admin atau cek dokumentasi di LMS.",
     category: "Umum",
     urgency: "medium",
     confidence: 0.4,
-    draft_reply: "Halo! Untuk pertanyaan ini, kami sarankan untuk menghubungi fasilitator langsung atau mengecek dokumentasi resmi di platform LMS Coding Camp.",
+    draft_reply: "Halo! Untuk pertanyaan ini, kami sarankan untuk menghubungi admin langsung atau mengecek dokumentasi resmi di platform LMS Coding Camp.",
   };
 }
 
@@ -267,69 +268,6 @@ function Markdown({ text }: { text: string }) {
   );
 }
 
-// ─── Draft Reply Card ──────────────────────────────────────────────────────
-// khusus fasilitator — kartu draft balasan yang bisa langsung disalin
-function DraftReplyCard({ draft, urgency }: { draft: string; urgency: UrgencyLevel }) {
-  const [copied, setCopied] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-  const uc = urgencyConfig[urgency];
-
-  const copy = () => {
-    navigator.clipboard.writeText(draft);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="mt-2 rounded-xl border border-[#CC0000]/30 bg-[#1A0A2E]/40 overflow-hidden"
-    >
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-[#CC0000]/10 transition-colors"
-      >
-        <div className="flex items-center gap-2">
-          <FileText className="w-3.5 h-3.5 text-[#FF4444] flex-shrink-0" />
-          <span className="text-[#FF6666] text-xs font-semibold">Draft Reply untuk Fasilitator</span>
-          <span className={`text-[10px] px-1.5 py-0.5 rounded-full border font-medium ${uc.pill}`}>
-            {uc.label}
-          </span>
-        </div>
-        <ChevronRight className={`w-3.5 h-3.5 text-[#FF4444] transition-transform ${expanded ? "rotate-90" : ""}`} />
-      </button>
-
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="px-3 pb-3 border-t border-[#CC0000]/20 pt-2.5">
-              <p className="text-slate-300 text-xs leading-relaxed mb-3 bg-[#141018]/50 rounded-lg p-2.5 border border-[#3D2D4D]/50">
-                {draft}
-              </p>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={copy}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#CC0000]/80 hover:bg-[#CC0000] text-white text-xs rounded-lg transition-all font-medium"
-                >
-                  {copied ? <CheckCircle2 className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                  {copied ? "Tersalin!" : "Salin Draft"}
-                </button>
-                <p className="text-slate-500 text-[10px]">Untuk digunakan atau dimodifikasi fasilitator</p>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
-
 // icon brain custom — belum ada di lucide versi yang kita pakai
 // nanti kalau lucide update bisa dihapus dan pakai yang official
 function Brain({ className }: { className?: string }) {
@@ -351,7 +289,7 @@ function nextId() {
 // ─── Main Component ─────────────────────────────────────────────────────────
 export function Chat() {
   const { user } = useAuth();
-  const isFasilitator = user?.role === "fasilitator";
+  const isAdmin = user?.role === "admin";
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -376,6 +314,7 @@ export function Chat() {
 
   // scroll ke bawah otomatis setiap ada pesan baru
   useEffect(() => {
+    if (messages.length === 0) return;
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
@@ -493,15 +432,16 @@ export function Chat() {
           </div>
 
           {/* status koneksi backend */}
-          <div className={`mt-2.5 flex items-center gap-2 px-3 py-2 rounded-xl text-xs border ${
-            apiStatus === "online"  ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" :
-            apiStatus === "offline" ? "bg-amber-500/10 border-amber-500/20 text-yellow-400" :
-                                     "bg-slate-700/30 border-[#3D2D4D] text-slate-500"
-          }`}>
-            {apiStatus === "online"  && <><CheckCircle2 className="w-3 h-3" /> API Model — Terhubung</>}
-            {apiStatus === "offline" && <><AlertTriangle className="w-3 h-3" /> API offline — Mode demo</>}
-            {apiStatus === "unknown" && <><div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin" /> Cek koneksi API...</>}
-          </div>
+          {apiStatus !== "offline" && (
+            <div className={`mt-2.5 flex items-center gap-2 px-3 py-2 rounded-xl text-xs border ${
+              apiStatus === "online"
+                ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+                : "bg-slate-700/30 border-[#3D2D4D] text-slate-500"
+            }`}>
+              {apiStatus === "online"  && <><CheckCircle2 className="w-3 h-3" /> API Model — Terhubung</>}
+              {apiStatus === "unknown" && <><div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin" /> Cek koneksi API...</>}
+            </div>
+          )}
         </div>
 
         {/* Info user */}
@@ -515,17 +455,12 @@ export function Chat() {
               <div>
                 <p className="text-white text-xs font-medium">{user.name}</p>
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full border font-medium capitalize ${
-                  user.role === "fasilitator"
+                  user.role === "admin"
                     ? "bg-amber-500/10 border-amber-500/30 text-yellow-400"
                     : "bg-blue-500/10 border-blue-500/30 text-blue-400"
                 }`}>{user.role}</span>
               </div>
             </div>
-            {isFasilitator && (
-              <p className="mt-2 text-[10px] text-yellow-400/80 bg-amber-500/10 border border-amber-500/20 rounded-lg px-2 py-1.5 leading-relaxed">
-                ✨ Mode fasilitator: draft reply otomatis tersedia di setiap respons AI
-              </p>
-            )}
           </div>
         )}
 
@@ -602,9 +537,9 @@ export function Chat() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {isFasilitator && (
+            {isAdmin && (
               <span className="text-[10px] bg-amber-500/10 border border-amber-500/30 text-yellow-400 px-2 py-1 rounded-full font-medium">
-                ✨ Mode Fasilitator
+                ✨ Mode Admin
               </span>
             )}
             {/* clear chat hanya di mobile — di desktop ada di sidebar */}
@@ -642,11 +577,6 @@ export function Chat() {
                     <p className="text-slate-400 text-sm max-w-sm mx-auto">
                       Tanyakan apa saja seputar Coding Camp 2026
                     </p>
-                    {isFasilitator && (
-                      <p className="mt-2 text-yellow-400 text-xs">
-                        ✨ Draft reply otomatis tersedia di setiap jawaban
-                      </p>
-                    )}
                   </div>
 
                   <p className="text-slate-600 text-[11px] text-center mb-3 uppercase tracking-widest font-semibold">
@@ -657,7 +587,7 @@ export function Chat() {
                       <button
                         key={q.text}
                         onClick={() => sendMessage(q.text)}
-                        className="group flex items-center gap-3 p-4 rounded-xl bg-[#1E1428]/50 border border-[#3D2D4D]/50 hover:border-[#CC0000]/50 hover:bg-[#1E1428] text-left transition-all duration-200"
+                        className="group flex items-center gap-3 p-3.5 rounded-xl bg-white/3 border border-white/7 hover:border-[#CC0000]/40 hover:bg-[#1E1428] text-left transition-all duration-200 hover:shadow-md hover:shadow-[#CC0000]/5"
                       >
                         <span className="text-lg flex-shrink-0">{categoryConfig[q.cat as CategoryType]?.emoji}</span>
                         <span className="text-slate-300 text-sm flex-1 group-hover:text-white transition-colors">{q.text}</span>
@@ -691,7 +621,7 @@ export function Chat() {
                         {msg.content}
                       </div>
                     ) : (
-                      <div className="w-full px-4 py-3.5 rounded-2xl rounded-tl-sm bg-[#1E1428] border border-[#3D2D4D]/50 shadow-sm">
+                      <div className="w-full px-4 py-3.5 rounded-2xl rounded-tl-sm bg-[#1E1428] border border-[#3D2D4D]/50 shadow-sm border-l-2 border-l-[#CC0000]/40">
                         <Markdown text={msg.content} />
                       </div>
                     )}
@@ -707,9 +637,9 @@ export function Chat() {
                           {urgencyConfig[msg.urgency].label} Urgency
                         </span>
                         {msg.confidence !== undefined && (
-                          <span className="text-[10px] text-slate-500 flex items-center gap-1">
-                            <span className="w-1 h-1 bg-slate-600 rounded-full" />
-                            Konfidensial {Math.round(msg.confidence * 100)}%
+                          <span className="text-[10px] text-slate-500 flex items-center gap-1 border border-white/8 px-2 py-0.5 rounded-full bg-white/3">
+                            <span className={`w-1.5 h-1.5 rounded-full ${msg.confidence >= 0.85 ? "bg-emerald-500" : msg.confidence >= 0.6 ? "bg-amber-400" : "bg-red-500"}`} />
+                            {Math.round(msg.confidence * 100)}% yakin
                           </span>
                         )}
                         {/* sumber RAG yang kepake */}
@@ -721,10 +651,26 @@ export function Chat() {
                       </div>
                     )}
 
-                    {/* Draft reply — hanya untuk fasilitator */}
-                    {msg.role === "bot" && msg.draftReply && isFasilitator && (
-                      <div className="w-full">
-                        <DraftReplyCard draft={msg.draftReply} urgency={msg.urgency ?? "low"} />
+                    {/* Draft Reply untuk Admin
+                         Fitur Side Quest — Generative AI sebagai pendukung (Project Plan CC26-PSU096)
+                         Hanya muncul untuk role admin, membantu fasilitator menjawab lebih cepat.
+                         draft_reply dikirim dari backend ML API bersama response klasifikasi.
+                    */}
+                    {isAdmin && msg.role === "bot" && msg.draftReply && (
+                      <div className="w-full mt-1 bg-amber-500/5 border border-amber-500/20 rounded-xl px-3.5 py-2.5">
+                        <p className="text-amber-400 text-[10px] font-bold uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+                          <Sparkles className="w-3 h-3" /> Draft Reply Fasilitator — AI Generated
+                        </p>
+                        <p className="text-slate-300 text-xs leading-relaxed">{msg.draftReply}</p>
+                        <button
+                          onClick={() => copyText(`${msg.id}_draft`, msg.draftReply!)}
+                          className="mt-2 flex items-center gap-1.5 text-[11px] text-amber-400 hover:text-amber-300 transition-colors"
+                        >
+                          {copiedId === `${msg.id}_draft`
+                            ? <><CheckCircle2 className="w-3 h-3" /> Tersalin!</>
+                            : <><Copy className="w-3 h-3" /> Salin Draft</>
+                          }
+                        </button>
                       </div>
                     )}
 
@@ -742,14 +688,6 @@ export function Chat() {
                           {copiedId === msg.id && (
                             <span className="text-[11px] text-emerald-400 font-medium">✓ Disalin!</span>
                           )}
-                          {/* thumbs up/down — belum connect ke BE, perlu endpoint feedback */}
-                          {/* TODO: implementasi feedback endpoint di sprint berikutnya */}
-                          <button className="p-1.5 rounded-lg text-slate-600 hover:text-emerald-400 hover:bg-[#1E1428] transition-all" title="Jawaban membantu">
-                            <ThumbsUp className="w-3 h-3" />
-                          </button>
-                          <button className="p-1.5 rounded-lg text-slate-600 hover:text-red-400 hover:bg-[#1E1428] transition-all" title="Jawaban kurang tepat">
-                            <ThumbsDown className="w-3 h-3" />
-                          </button>
                         </>
                       )}
                       <span className="text-[11px] text-slate-600 flex items-center gap-1 ml-1">
@@ -781,15 +719,18 @@ export function Chat() {
                     <Bot className="w-4 h-4 text-white" />
                   </div>
                   <div className="px-4 py-3.5 rounded-2xl rounded-tl-sm bg-[#1E1428] border border-[#3D2D4D]/50">
-                    <div className="flex items-center gap-1.5">
-                      {[0, 1, 2].map(i => (
-                        <motion.span
-                          key={i}
-                          className="w-2 h-2 bg-[#FF4444] rounded-full"
-                          animate={{ y: [0, -5, 0], opacity: [0.4, 1, 0.4] }}
-                          transition={{ duration: 0.7, repeat: Infinity, delay: i * 0.18 }}
-                        />
-                      ))}
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-1">
+                        {[0, 1, 2].map(i => (
+                          <motion.span
+                            key={i}
+                            className="w-1.5 h-1.5 bg-[#FF4444] rounded-full"
+                            animate={{ y: [0, -4, 0], opacity: [0.3, 1, 0.3] }}
+                            transition={{ duration: 0.65, repeat: Infinity, delay: i * 0.16 }}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-slate-500 text-xs">Copilot sedang memproses...</span>
                     </div>
                   </div>
                 </motion.div>
@@ -802,9 +743,9 @@ export function Chat() {
         </div>
 
         {/* ── Input area ── */}
-        <div className="flex-shrink-0 px-4 py-4 border-t border-[#2D1F3D] bg-[#141018]/70 backdrop-blur">
+        <div className="flex-shrink-0 px-4 py-3 border-t border-[#2D1F3D] bg-[#0D0D0D]/90 backdrop-blur-md">
           <div className="max-w-3xl mx-auto">
-            <div className="flex items-end gap-3 bg-[#1E1428] border border-[#3D2D4D]/80 rounded-2xl px-4 py-3 focus-within:border-[#CC0000]/70 focus-within:ring-2 focus-within:ring-[#CC0000]/15 transition-all duration-200 shadow-lg">
+            <div className="flex items-end gap-3 bg-[#1A1025] border border-white/10 rounded-2xl px-4 py-3 focus-within:border-[#CC0000]/60 focus-within:bg-[#1E1428] focus-within:shadow-[0_0_0_3px_rgba(204,0,0,0.1)] transition-all duration-200">
               <textarea
                 ref={inputRef}
                 value={input}
@@ -824,8 +765,7 @@ export function Chat() {
               </button>
             </div>
             <p className="text-slate-700 text-[11px] text-center mt-2">
-              {apiStatus === "offline" ? "⚠️ Mode demo — API model belum terhubung · " : ""}
-              Copilot AI dapat membuat kesalahan · Verifikasi ke fasilitator ·{" "}
+              Copilot AI dapat membuat kesalahan · Verifikasi ke admin ·{" "}
               <kbd className="bg-[#1E1428] px-1 rounded text-slate-500">Enter</kbd> kirim ·{" "}
               <kbd className="bg-[#1E1428] px-1 rounded text-slate-500">Shift+Enter</kbd> baris baru
             </p>
