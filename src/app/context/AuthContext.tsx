@@ -5,7 +5,7 @@ import { createContext, useContext, useState, ReactNode } from "react";
 export interface AuthUser {
   email: string;
   name: string;
-  role: "peserta" | "fasilitator";
+  role: "peserta" | "admin";
   id: string;
   token?: string;
 }
@@ -15,6 +15,7 @@ interface AuthContextType {
   isLoggedIn: boolean;
   login: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
+  updateUser: (updates: Partial<AuthUser>) => void;
 }
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:5000";
@@ -32,13 +33,13 @@ const DEMO_USERS: Record<string, { password: string; user: AuthUser }> = {
       id: "USR-001",
     },
   },
-  "fasilitator@codingcamp.id": {
-    password: "fasil2026",
+  "admin@codingcamp.id": {
+    password: "admin2026",
     user: {
-      email: "fasilitator@codingcamp.id",
-      name: "Fasilitator Demo",
-      role: "fasilitator",
-      id: "FAC-001",
+      email: "admin@codingcamp.id",
+      name: "Admin Demo",
+      role: "admin",
+      id: "ADM-001",
     },
   },
 };
@@ -135,8 +136,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // bukan di sini supaya ga ada coupling ke router
   };
 
+  const updateUser = (updates: Partial<AuthUser>) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const next = { ...prev, ...updates };
+      const inLocal = localStorage.getItem(STORAGE_KEY) !== null;
+      saveSession(next, inLocal);
+      return next;
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn: !!user, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoggedIn: !!user, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
