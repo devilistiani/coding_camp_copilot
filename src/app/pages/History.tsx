@@ -106,10 +106,10 @@ export function History() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#0D0D0D]">
 
       {/* Header */}
-      <section className="bg-gradient-to-br from-[#0D0D0D] via-[#1A0A2E] to-[#0D0D0D] text-white py-12">
+      <section className="bg-gradient-to-br from-[#0D0D0D] via-[#1A0A2E] to-[#0D0D0D] text-white py-10 border-b border-white/5">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -139,14 +139,14 @@ export function History() {
               placeholder="Cari pertanyaan atau kategori..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#CC0000]/30 focus:border-[#CC0000]/50 transition-all"
+              className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-[#CC0000]/30 focus:border-[#CC0000]/50 transition-all"
             />
           </div>
 
           {history.length > 0 && (
             <button
               onClick={() => setConfirmClear(true)}
-              className="flex items-center gap-2 px-4 py-2.5 border border-red-200 text-red-500 rounded-xl hover:bg-red-50 transition-all text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2.5 border border-red-500/30 text-red-400 rounded-xl hover:bg-red-500/10 transition-all text-sm font-medium"
             >
               <Trash2 className="w-4 h-4" />
               Hapus Semua
@@ -192,11 +192,11 @@ export function History() {
             animate={{ opacity: 1, scale: 1 }}
             className="text-center py-16"
           >
-            <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <MessageSquare className="w-8 h-8 text-slate-300" />
+            <div className="w-16 h-16 bg-[#1E1428] border border-white/8 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <MessageSquare className="w-8 h-8 text-slate-500" />
             </div>
-            <p className="text-slate-600 font-medium mb-2">Belum ada riwayat chat</p>
-            <p className="text-slate-400 text-sm mb-5">
+            <p className="text-white font-semibold mb-2">Belum ada riwayat chat</p>
+            <p className="text-slate-500 text-sm mb-5 max-w-xs mx-auto">
               Mulai tanya ke Copilot — riwayat akan tersimpan otomatis di browser kamu.
             </p>
             <Link
@@ -211,9 +211,9 @@ export function History() {
 
         {/* Tidak ada hasil search */}
         {history.length > 0 && filtered.length === 0 && (
-          <div className="text-center py-12 text-slate-400">
-            <Search className="w-8 h-8 mx-auto mb-2 opacity-30" />
-            <p>Tidak ada hasil untuk "{search}"</p>
+          <div className="text-center py-12">
+            <Search className="w-8 h-8 mx-auto mb-3 text-slate-700" />
+            <p className="text-slate-500 text-sm">Tidak ada hasil untuk &ldquo;{search}&rdquo;</p>
           </div>
         )}
 
@@ -225,12 +225,12 @@ export function History() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-[#CC0000]/20 transition-colors"
+              className="bg-[#120A1C] border border-white/7 rounded-2xl overflow-hidden hover:border-[#CC0000]/30 hover:bg-[#180D28] transition-all duration-200 group"
             >
               {/* Header row — klik untuk expand/collapse */}
               <button
                 onClick={() => setExpandedId(expandedId === item.id ? null : item.id)}
-                className="w-full flex items-center gap-3 p-4 text-left hover:bg-slate-50 transition-colors"
+                className="w-full flex items-center gap-3 p-4 text-left hover:bg-white/5 transition-colors"
               >
                 <div className="w-8 h-8 bg-gradient-to-br from-[#CC0000] to-[#8B0000] rounded-lg flex items-center justify-center flex-shrink-0">
                   <Bot className="w-4 h-4 text-white" />
@@ -238,7 +238,7 @@ export function History() {
 
                 <div className="flex-1 min-w-0">
                   {/* truncate kalau pertanyaan panjang */}
-                  <p className="text-slate-800 font-medium text-sm truncate">
+                  <p className="text-slate-200 font-medium text-sm truncate">
                     {item.question}
                   </p>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -272,10 +272,10 @@ export function History() {
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <div className="px-4 pb-4 pt-3 border-t border-slate-100">
+                    <div className="px-4 pb-4 pt-3 border-t border-white/8">
                       {/* whitespace-pre-line supaya newline tetap kelihatan */}
-                      <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 mb-3">
-                        <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line">
+                      <div className="bg-white/5 border border-white/10 rounded-xl p-3.5 mb-3">
+                        <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-line">
                           {item.answer}
                         </p>
                       </div>
