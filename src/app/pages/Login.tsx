@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate, Navigate } from "react-router";
-import { Bot, Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, Shield } from "lucide-react";
+import { Bot, Mail, Lock, Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
 import { motion } from "motion/react";
 import { useAuth } from "../context/AuthContext";
 
@@ -39,19 +39,6 @@ export function Login() {
     }
   };
 
-  // isi form otomatis dengan kredensial demo
-  // berguna waktu demo ke penguji — ga perlu ketik manual
-  const fillDemo = (role: "peserta" | "fasilitator") => {
-    if (role === "peserta") {
-      setEmail("peserta@codingcamp.id");
-      setPassword("copilot2026");
-    } else {
-      setEmail("fasilitator@codingcamp.id");
-      setPassword("fasil2026");
-    }
-    setError(""); // clear error lama
-  };
-
   return (
     <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4 relative overflow-hidden">
       {/* decorative blobs — visual aja, pointer-events none */}
@@ -75,7 +62,7 @@ export function Login() {
 
         {/* Form card */}
         <div className="bg-[#130B1E] border border-red-900/20 rounded-2xl p-8 shadow-2xl">
-          <h2 className="text-white text-lg font-semibold mb-6">Masuk ke Akun</h2>
+          <h2 className="text-white text-lg font-semibold mb-6 text-center">Masuk ke Akun</h2>
 
           {/* Error alert */}
           {error && (
@@ -141,29 +128,12 @@ export function Login() {
             </button>
           </form>
 
-          {/* Demo credentials */}
-          <div className="mt-6 pt-5 border-t border-white/5">
-            <div className="flex items-center gap-2 mb-3">
-              <Shield className="w-3.5 h-3.5 text-slate-500" />
-              <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">Akun Demo</p>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => fillDemo("peserta")}
-                className="flex flex-col items-start px-3 py-2.5 bg-white/5 border border-white/10 hover:border-[#5B1A8A]/50 hover:bg-[#5B1A8A]/10 rounded-xl transition-all text-left"
-              >
-                <span className="text-white text-xs font-semibold">Peserta</span>
-                <span className="text-slate-500 text-[10px] mt-0.5">copilot2026</span>
-              </button>
-              <button
-                onClick={() => fillDemo("fasilitator")}
-                className="flex flex-col items-start px-3 py-2.5 bg-white/5 border border-white/10 hover:border-[#E31E24]/50 hover:bg-[#E31E24]/10 rounded-xl transition-all text-left"
-              >
-                <span className="text-[#E31E24] text-xs font-semibold">Fasilitator</span>
-                <span className="text-slate-500 text-[10px] mt-0.5">fasil2026</span>
-              </button>
-            </div>
-          </div>
+          <p className="mt-6 text-center text-slate-400 text-sm">
+            Belum punya Akun?{" "}
+            <Link to="/register" className="text-[#E31E24] hover:text-[#FF4444] font-semibold transition-colors">
+              Daftar Sekarang
+            </Link>
+          </p>
         </div>
 
         <p className="text-center text-slate-600 text-xs mt-6">
