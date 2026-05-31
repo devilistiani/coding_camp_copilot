@@ -1,22 +1,30 @@
 /* ─────────────────────────────────────────────────────────
    Coding Camp Copilot — Typography
-   Pakai Google Fonts biar lebih bagus dari default browser
-   Plus Fira Code untuk kode / monospace di chat
+   Sora: heading display font (geometric, tegas, human)
+   DM Sans: body text (readable, modern)
+   Fira Code: monospace untuk kode
    ───────────────────────────────────────────────────────── */
 
-/* Preconnect dulu biar lebih cepat load */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Fira+Code:wght@400;500&display=swap');
 
 :root {
-  /* Plus Jakarta Sans - font utama, lebih modern dari Inter */
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', sans-serif;
+  --font-display: 'Sora', -apple-system, sans-serif;
+  --font-body:    'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono-cc: 'Fira Code', 'Courier New', monospace;
+
+  /* Terapkan sebagai default body */
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Font mono untuk code snippets di chat */
+/* Heading pakai Sora — berikan karakter visual yang kuat */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
+
+/* Monospace */
 code, kbd, pre, .font-mono {
-  font-family: 'Fira Code', 'Courier New', monospace;
-  font-feature-settings: "liga" 1, "calt" 1; /* aktifkan ligatur */
+  font-family: var(--font-mono-cc);
+  font-feature-settings: "liga" 1, "calt" 1;
 }
