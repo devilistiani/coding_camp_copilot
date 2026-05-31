@@ -32,24 +32,22 @@ const mainQuestItems = [
 const sideQuestItems = [
   { icon: Zap,       text: "Akurasi model > 85% (F1-score, precision, recall terukur)" },
   { icon: BarChart3, text: "Dashboard analitik interaktif berbasis Streamlit (Live URL terpisah)" },
-  { icon: Sparkles,  text: "Fitur teks Generative AI sebagai pendukung (draft reply otomatis fasilitator)" },
+  { icon: Sparkles,  text: "Fitur teks Generative AI sebagai pendukung (draft reply otomatis admin)" },
 ];
 
 const features = [
-  { icon: Brain,     color: "from-[#CC0000] to-[#8B0000]", bg: "bg-[#1A0A2E]/5",  title: "NLP TensorFlow Custom",     desc: "Model Deep Learning dibangun mandiri menggunakan TensorFlow Functional API untuk klasifikasi pertanyaan peserta." },
-  { icon: Target,    color: "from-[#059669] to-[#0D9488]",  bg: "bg-emerald-50", title: "Klasifikasi + Urgensi",      desc: "Mengklasifikasikan kategori masalah dan menentukan tingkat urgensi (Low / Medium / High) secara otomatis." },
-  { icon: BookOpen,  color: "from-[#CC0000] to-[#8B0000]",     bg: "bg-[#0D0D0D]/5",    title: "RAG Knowledge Base",         desc: "Retrieval-Augmented Generation menarik jawaban dari FAQ resmi, Google Docs, dan dokumen internal Coding Camp." },
-  { icon: Sparkles,  color: "from-[#B45309] to-[#D97706]",  bg: "bg-amber-50",   title: "Draft Reply Fasilitator",    desc: "Generative AI menghasilkan draft balasan otomatis untuk membantu fasilitator menjawab lebih cepat." },
-  { icon: Database,  color: "from-[#4B1E6B] to-[#8B2FC9]", bg: "bg-[#4B1E6B]/5",  title: "PostgreSQL Knowledge Store", desc: "Database PostgreSQL menyimpan histori percakapan, knowledge base, dan data pengguna dengan aman." },
-  { icon: Shield,    color: "from-[#881337] to-[#CC0000]",     bg: "bg-rose-50",    title: "Privasi & Keamanan Data",    desc: "Dataset sintetis dan anonimisasi memastikan informasi peserta tidak disalahgunakan. Tidak ada data sensitif." },
+  { icon: Brain,     color: "from-[#CC0000] to-[#8B0000]", bg: "bg-violet-500/10",  title: "NLP TensorFlow Custom",     desc: "Model Deep Learning dibangun mandiri menggunakan TensorFlow Functional API untuk klasifikasi pertanyaan peserta." },
+  { icon: Target,    color: "from-[#059669] to-[#0D9488]",  bg: "bg-emerald-500/10", title: "Klasifikasi + Urgensi",      desc: "Mengklasifikasikan kategori masalah dan menentukan tingkat urgensi (Low / Medium / High) secara otomatis." },
+  { icon: Database,  color: "from-[#4B1E6B] to-[#8B2FC9]", bg: "bg-violet-500/10",  title: "PostgreSQL Knowledge Store", desc: "Database PostgreSQL menyimpan histori percakapan, knowledge base, dan data pengguna dengan aman." },
+  { icon: Shield,    color: "from-[#881337] to-[#CC0000]",     bg: "bg-rose-500/10",    title: "Privasi & Keamanan Data",    desc: "Dataset sintetis dan anonimisasi memastikan informasi peserta tidak disalahgunakan. Tidak ada data sensitif." },
 ];
 
 const techStack = [
   { group: "Frontend",  items: ["React.js", "TypeScript", "Tailwind CSS", "Vite"] },
   { group: "Backend",   items: ["Express.js", "Node.js", "REST API", "JWT Auth"] },
-  { group: "AI / ML",   items: ["TensorFlow", "NLP", "RAG", "Scikit-learn"] },
+  { group: "AI / ML",   items: ["TensorFlow", "NLP", "Scikit-learn"] },
   { group: "Database",  items: ["PostgreSQL", "JSON/JSONB"] },
-  { group: "DevOps",    items: ["GitHub", "GCP / Railway / Render", "Postman", "Trello"] },
+  { group: "All",    items: ["GitHub", "GCP / Railway / Render", "Postman", "Trello"] },
 ];
 
 const problems = [
@@ -59,8 +57,39 @@ const problems = [
   "Fasilitator terlambat menangani pertanyaan yang lebih kompleks",
 ];
 
-// TODO: bikin section tech stack yang udah didefinisi di atas — belum sempat
-// const _techStack = techStack; // nanti dipake
+const sprintTimeline = [
+  { phase: "Sprint 1",  dates: "24 Apr — 3 Mei",  label: "Riset & Desain",         done: true,  desc: "Wireframe UI, dataset sintetis, arsitektur model NLP" },
+  { phase: "Sprint 2",  dates: "4 Mei — 17 Mei",  label: "Pengembangan Inti",       done: true,  desc: "Training TensorFlow, REST API backend, UI halaman utama" },
+  { phase: "Sprint 3",  dates: "18 Mei — 24 Mei", label: "Integrasi & Testing",     done: true,  desc: "Integrasi FE-BE-AI, A/B testing model, dashboard Streamlit" },
+  { phase: "Sprint 4",  dates: "25 Mei — 4 Jun",  label: "Deployment & Finalisasi", done: false, desc: "Deploy ke GCP/Railway, bug fixing, dokumentasi lengkap" },
+  { phase: "Submit",    dates: "5 Jun 2026",       label: "Deadline Submission",     done: false, desc: "Project Brief, Laporan Teknis DS, Slide, Live URL semua harus siap" },
+];
+
+// Main Quest & Side Quest 
+const mainQuestChecklist = [
+  { done: true,  text: "Networking calls ke REST API pada proyek" },
+  { done: true,  text: "Module bundler Vite untuk build aplikasi web" },
+  { done: false, text: "Membangun RESTful API (Express.js + Node.js)" },
+  { done: false, text: "RESTful API menyimpan data ke PostgreSQL" },
+  { done: false, text: "URL endpoint mengikuti konvensi RESTful" },
+  { done: false, text: "Integrasi AI/ML sebagai fitur utama aplikasi" },
+  { done: true,  text: "Fitur utama berjalan tanpa crash" },
+  { done: true,  text: "Tidak menggunakan Web Generator" },
+  { done: false, text: "Model Deep Learning TensorFlow Functional API/Subclassing" },
+  { done: false, text: "Custom komponen (Layer/Loss/Callback)" },
+  { done: false, text: "Model tersimpan format .keras atau SavedModel" },
+];
+
+const sideQuestChecklist = [
+  { done: true,  text: "Mockup aplikasi (wireframe & desain UI)" },
+  { done: true,  text: "Layout responsif berbagai ukuran layar" },
+  { done: false, text: "RESTful API menyimpan data ke database" },
+  { done: false, text: "Deploy ke GitHub Pages / Netlify / Vercel / GCP" },
+  { done: false, text: "Akurasi model ≥ 85% (F1-score terukur)" },
+  { done: false, text: "Dashboard Streamlit Cloud (Live URL publik)" },
+  { done: false, text: "Generative AI API sebagai fitur pendukung" },
+  { done: false, text: "A/B Testing implementasi Python" },
+];
 
 export function Home() {
   return (
@@ -166,27 +195,6 @@ export function Home() {
                   </div>
                 </div>
               </div>
-              {/* Floating badges */}
-              <motion.div animate={{ y: [0, -6, 0] }} transition={{ duration: 3, repeat: Infinity }}
-                className="absolute -top-4 -right-4 bg-white rounded-xl px-3 py-2 shadow-xl flex items-center gap-2">
-                <div className="w-6 h-6 bg-emerald-100 rounded-lg flex items-center justify-center">
-                  <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-                </div>
-                <div>
-                  <p className="text-slate-900 text-xs font-bold">Target Side Quest</p>
-                  <p className="text-emerald-600 text-[10px]">Akurasi &gt; 85%</p>
-                </div>
-              </motion.div>
-              <motion.div animate={{ y: [0, 6, 0] }} transition={{ duration: 3, repeat: Infinity, delay: 1 }}
-                className="absolute -bottom-4 -left-4 bg-white rounded-xl px-3 py-2 shadow-xl flex items-center gap-2">
-                <div className="w-6 h-6 bg-[#CC0000]/10 rounded-lg flex items-center justify-center">
-                  <Zap className="w-3.5 h-3.5 text-[#CC0000]" />
-                </div>
-                <div>
-                  <p className="text-slate-900 text-xs font-bold">RAG Enabled</p>
-                  <p className="text-[#CC0000] text-[10px]">Knowledge Base Aktif</p>
-                </div>
-              </motion.div>
             </motion.div>
           </div>
         </div>
@@ -226,7 +234,7 @@ export function Home() {
                 ke dalam satu pintu layanan berbasis AI — menyediakan jawaban cepat, terpusat, dan dapat diakses kapan saja.
               </p>
               <div className="space-y-2">
-                {["Klasifikasi kategori pertanyaan otomatis", "Deteksi tingkat urgensi (Low/Medium/High)", "Draft reply otomatis untuk fasilitator", "Knowledge Base terintegrasi dengan RAG"].map((item) => (
+                {["Klasifikasi kategori pertanyaan otomatis", "Deteksi tingkat urgensi (Low/Medium/High)", "Menyimpan riwayat percakapan"].map((item) => (
                   <div key={item} className="flex items-center gap-2 text-sm text-slate-300">
                     <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                     {item}
@@ -239,27 +247,27 @@ export function Home() {
       </section>
 
       {/* ── Fitur Sistem ── */}
-      <section className="py-16 bg-slate-50">
+      <section className="py-16 bg-[#0A0A12]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <span className="inline-flex items-center gap-1.5 bg-[#4B1E6B]/5 text-purple-700 text-sm font-medium px-4 py-1.5 rounded-full mb-4">
               <Zap className="w-3.5 h-3.5" /> Fitur Sistem
             </span>
-            <h2 className="text-slate-900 text-3xl font-bold mb-3">Arsitektur & Kemampuan Copilot</h2>
-            <p className="text-slate-500 text-sm max-w-lg mx-auto">Dibangun dengan stack teknologi sesuai sumber daya yang ditetapkan Project Plan</p>
+            <h2 className="text-white text-3xl font-bold mb-3">Arsitektur & Kemampuan Copilot</h2>
+            <p className="text-slate-400 text-sm max-w-lg mx-auto">Dibangun dengan stack teknologi sesuai sumber daya yang ditetapkan Project Plan</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((f, i) => (
               <motion.div key={f.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }} transition={{ delay: i * 0.08 }}
-                className="bg-white rounded-2xl border border-slate-100 p-5 hover:shadow-md hover:border-[#CC0000]/20 transition-all">
+                className="bg-white/4 border border-white/8 rounded-2xl p-5 hover:bg-white/7 hover:border-[#CC0000]/30 transition-all">
                 <div className={`w-10 h-10 ${f.bg} rounded-xl flex items-center justify-center mb-3`}>
                   <div className={`w-5 h-5 bg-gradient-to-br ${f.color} rounded-lg flex items-center justify-center`}>
                     <f.icon className="w-3 h-3 text-white" />
                   </div>
                 </div>
-                <h3 className="text-slate-900 font-semibold text-sm mb-1.5">{f.title}</h3>
-                <p className="text-slate-500 text-xs leading-relaxed">{f.desc}</p>
+                <h3 className="text-white font-semibold text-sm mb-1.5">{f.title}</h3>
+                <p className="text-slate-400 text-xs leading-relaxed">{f.desc}</p>
               </motion.div>
             ))}
           </div>
