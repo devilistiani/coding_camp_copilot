@@ -17,10 +17,9 @@ export function Footer() {
               </div>
             </div>
             <p className="text-sm text-slate-500 leading-relaxed">
-              Sistem AI terpadu untuk peserta Coding Camp 2026 — mengklasifikasikan pertanyaan,
-              menentukan urgensi, dan memberikan draft reply otomatis untuk fasilitator.
+              Sistem AI terpadu untuk peserta Coding Camp 2026 mengklasifikasikan pertanyaan, dan
+              menentukan urgensi.
             </p>
-            <p className="text-slate-600 text-xs mt-3 font-mono">ID Tim: CC26-PSU096</p>
           </div>
 
           <div>
@@ -43,13 +42,11 @@ export function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-3 text-sm">Info Proyek</h4>
             <ul className="space-y-1.5 text-sm text-slate-500">
-              <li>🎯 Tema: <span className="text-slate-300">Accessible & Adaptive Learning</span></li>
-              <li>🏆 <span className="text-slate-300">Coding Camp 2026</span></li>
-              <li>🤝 Powered by <span className="text-[#E31E24] font-semibold">DBS Foundation</span></li>
+              <li> <span className="text-slate-300">Accessible & Adaptive Learning</span></li>
+              <li> <span className="text-slate-300">Coding Camp 2026</span></li>
+              <li> <span className="text-[#E31E24] font-semibold">Coding Camp by DBS Foundation 2026</span></li>
               <li className="pt-1">
-                <span className="text-[10px] bg-red-950/40 border border-red-800/30 text-red-400 px-2 py-1 rounded-full">
-                  NLP · TensorFlow · RAG · PostgreSQL
-                </span>
+  
               </li>
             </ul>
           </div>
@@ -58,7 +55,7 @@ export function Footer() {
         <div className="border-t border-white/5 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-slate-600 flex items-center gap-1">
             Dibuat oleh{" "}
-            <span className="text-slate-500">Tim CC26-PSU096 · 6 Anggota · 3 Learning Path</span>
+            <span className="text-slate-500">Tim CC26-PSU096</span>
           </p>
           <div className="flex items-center gap-4">
             <a href="#" className="text-slate-600 hover:text-[#E31E24] transition-colors">
