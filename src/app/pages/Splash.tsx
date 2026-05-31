@@ -208,18 +208,7 @@ export function Splash() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9, duration: 0.5 }}
           className="flex flex-wrap justify-center gap-2"
-        >
-          {["NLP TensorFlow", "RAG Knowledge", "Real-time AI"].map((label, i) => (
-            <motion.span
-              key={label}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.9 + i * 0.1 }}
-              className="text-[11px] px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-500 font-medium"
-            >
-              {label}
-            </motion.span>
-          ))}
+        >   
         </motion.div>
       </div>
 
