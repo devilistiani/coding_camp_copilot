@@ -469,7 +469,6 @@ export function Chat() {
           <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mb-3">Teknologi AI</p>
           {[
             { icon: Brain,    label: "NLP TensorFlow Custom",  color: "text-[#FF4444]"  },
-            { icon: BookOpen, label: "RAG Knowledge Base",     color: "text-[#C084FC]"  },
             { icon: Zap,      label: "Akurasi Target >85%",    color: "text-yellow-400" },
             { icon: Shield,   label: "Privasi Data Terjaga",   color: "text-emerald-400"},
           ].map(({ icon: Icon, label, color }) => (
