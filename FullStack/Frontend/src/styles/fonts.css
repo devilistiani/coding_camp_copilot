@@ -1,0 +1,22 @@
+/* ─────────────────────────────────────────────────────────
+   Coding Camp Copilot — Typography
+   Pakai Google Fonts biar lebih bagus dari default browser
+   Plus Fira Code untuk kode / monospace di chat
+   ───────────────────────────────────────────────────────── */
+
+/* Preconnect dulu biar lebih cepat load */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  /* Plus Jakarta Sans - font utama, lebih modern dari Inter */
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Font mono untuk code snippets di chat */
+code, kbd, pre, .font-mono {
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-feature-settings: "liga" 1, "calt" 1; /* aktifkan ligatur */
+}

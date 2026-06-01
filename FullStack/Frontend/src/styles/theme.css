@@ -1,0 +1,137 @@
+@custom-variant dark (&:is(.dark *));
+
+/* ═══════════════════════════════════════════════════
+   CODING CAMP 2026 × DBS Foundation
+   Palet resmi dari Capstone Playbook:
+   Merah  : #E31E24  (DBS Red)
+   Ungu   : #5B1A8A  (Deep Violet)
+   Hitam  : #0D0D0D
+   ═══════════════════════════════════════════════════ */
+:root {
+  --font-size: 16px;
+
+  /* ── Brand CC 2026 × DBS ── */
+  --cc-red:         #E31E24;
+  --cc-red-dark:    #A51419;
+  --cc-red-light:   #FF4D52;
+  --cc-purple:      #5B1A8A;
+  --cc-purple-dark: #3A0F5C;
+  --cc-purple-mid:  #2C0D47;
+  --cc-black:       #0D0D0D;
+  --cc-dark:        #130B1E;
+  --cc-dark-mid:    #1C1030;
+  --cc-dark-border: #2E1650;
+
+  --background:        #FFFFFF;
+  --foreground:        #0D0D0D;
+  --card:              #FFFFFF;
+  --card-foreground:   #0D0D0D;
+  --popover:           #FFFFFF;
+  --popover-foreground:#0D0D0D;
+
+  --primary:           #E31E24;
+  --primary-foreground:#FFFFFF;
+  --primary-hover:     #A51419;
+
+  --secondary:         #F7EEFF;
+  --secondary-foreground:#5B1A8A;
+
+  --muted:             #F4F0F8;
+  --muted-foreground:  #7A6A8A;
+
+  --accent:            #FFF0F0;
+  --accent-foreground: #E31E24;
+
+  --destructive:        #E31E24;
+  --destructive-foreground: #FFFFFF;
+
+  --border:            rgba(227,30,36,0.15);
+  --input:             transparent;
+  --input-background:  #FFF5F5;
+  --switch-background: #D4B0C6;
+
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring:   #E31E24;
+  --radius: 0.625rem;
+
+  --sidebar:                   #FFFFFF;
+  --sidebar-foreground:         #0D0D0D;
+  --sidebar-primary:            #E31E24;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent:             #FFF0F0;
+  --sidebar-accent-foreground:  #E31E24;
+  --sidebar-border:             rgba(227,30,36,0.12);
+  --sidebar-ring:               #E31E24;
+
+  /* FIX: light mode color-scheme supaya elemen browser native ikut tema terang */
+  color-scheme: light;
+}
+
+.dark {
+  --background:        #0D0D0D;
+  --foreground:        #F5F0FF;
+  --card:              #130B1E;
+  --card-foreground:   #F5F0FF;
+  --popover:           #1C1030;
+  --popover-foreground:#F5F0FF;
+
+  --primary:           #E31E24;
+  --primary-foreground:#FFFFFF;
+  --primary-hover:     #FF4D52;
+
+  --secondary:         #1C1030;
+  --secondary-foreground:#E8D5FF;
+
+  --muted:             #1C1030;
+  --muted-foreground:  #9B8AAA;
+
+  --accent:            #2D0A14;
+  --accent-foreground: #FF4D52;
+
+  --destructive:        #E31E24;
+  --destructive-foreground: #FFFFFF;
+
+  --border:            rgba(227,30,36,0.25);
+  --input:             transparent;
+  --input-background:  #1C1030;
+  --switch-background: #3D2050;
+
+  --ring: #E31E24;
+
+  --sidebar:                   #130B1E;
+  --sidebar-foreground:         #F5F0FF;
+  --sidebar-primary:            #E31E24;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent:             #2D0A14;
+  --sidebar-accent-foreground:  #FF4D52;
+  --sidebar-border:             rgba(227,30,36,0.25);
+  --sidebar-ring:               #E31E24;
+
+  /* FIX: dark mode color-scheme supaya scrollbar & form control ikut tema gelap */
+  color-scheme: dark;
+}
+
+* { border-color: var(--border); outline-color: var(--ring); }
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-size: var(--font-size);
+  font-weight: var(--font-weight-normal);
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────────
+   FIX: track pakai var(--background) bukan hardcode #0D0D0D
+   Sebelumnya: di light mode, scrollbar track hitam = sangat jelek
+   ───────────────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: var(--background); }
+::-webkit-scrollbar-thumb  { background: #E31E24; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #FF4D52; }
+
+/* ── Selection ─────────────────────────────────────────────────────────────
+   FIX: color pakai var(--foreground) bukan hardcode #0D0D0D
+   Sebelumnya: di dark mode, teks terpilih jadi hitam di atas bg gelap = tak terlihat
+   ───────────────────────────────────────────────────────────────────────── */
+::selection { background: rgba(227,30,36,0.30); color: var(--foreground); }
